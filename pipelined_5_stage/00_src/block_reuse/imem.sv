@@ -7,7 +7,7 @@ module imem (
     logic [7:0] instr_mem [0:8191];
 
     initial
-    $readmemh("../02_test/dump/mem.dump",instr_mem);
+    $readmemh("../02_sim/instruction_mem.mem",instr_mem);
 
     assign data_o = {instr_mem[addr_i+32'h0000_0003], instr_mem[addr_i+32'h0000_0002], instr_mem[addr_i+32'h0000_0001], instr_mem[addr_i]};
 

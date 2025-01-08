@@ -15,7 +15,6 @@ lw   x2, 0(x0)
 
 #Store after Load
 sw   x2, 4(x0)
-
 lw   x7, 4(x0)
 
 jal  x1, func

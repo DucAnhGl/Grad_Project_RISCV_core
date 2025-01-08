@@ -25,7 +25,7 @@ module btb #(
 
     //Sync write:
     always @(posedge clk_i or negedge rst_ni) begin
-        if (rst_ni) begin
+        if (!rst_ni) begin
             for (i=0; i<TABLE_SIZE; i=i+1) begin
                 // target_table[i] <= 0;
                 // tag_table   [i] <= 0;

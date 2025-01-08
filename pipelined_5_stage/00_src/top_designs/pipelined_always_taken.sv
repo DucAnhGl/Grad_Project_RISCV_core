@@ -55,7 +55,7 @@ localparam INDEX_WIDTH = 12;
     logic [31:0] EX_alu_data, EX_br_addr;
     logic        EX_true_br_decision;
     logic [31:0] EX_alu_opa, EX_alu_opb, EX_br_base, EX_fwd_rs1_data, EX_fwd_rs2_data;
-    logic [3:0]  EX_alu_op; 
+    logic [3:0]  EX_alu_op;
  
 /*==============================   MEM SIGNALS   ==============================*/
     /* Control signal */
@@ -68,6 +68,7 @@ localparam INDEX_WIDTH = 12;
     logic [2:0]  EXMEM_funct3;
     logic [4:0]  EXMEM_rd;
     logic [31:0] MEM_lsu_rdata;
+    logic        EXMEM_is_jmp;
 
 /*==============================   WB SIGNALS   ==============================*/
     /* Control signal */
@@ -422,6 +423,8 @@ lsu inst_lsu (
     .io_hex6_o  (io_hex6_o),    
     .io_hex7_o  (io_hex7_o)      
 );
+
+assign EXMEM_is_jmp = EXMEM_is_br || (EXMEM_is_uncbr==2'b10);
 
 //MEMWB pipeline register: async rstn
 always @(posedge clk_i or negedge rst_ni) begin

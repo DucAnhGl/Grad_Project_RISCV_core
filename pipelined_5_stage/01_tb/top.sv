@@ -16,11 +16,11 @@ module top
     .clk_i  (clk_i),
     .rst_ni (rst_ni),
 
-    .io_sw_i    (),    // Input for switches
-    .io_btn_i   (),   // Input for buttons
+    .io_sw_i    (),  // Input for switches
+    .io_btn_i   (),  // Input for buttons
 
-    .pc_debug_o (), // Debug program counter
-    .insn_vld_o (), // Instruction valid
+    .pc_debug_o (),  // Debug program counter
+    .insn_vld_o (),  // Instruction valid
     .io_ledr_o  (),  // Output for driving red LEDs
     .io_ledg_o  (),  // Output for driving green LEDs
     .io_hex0_o  (),  // Output for driving 7-segment LED display
@@ -35,8 +35,8 @@ module top
   );
 
   assign br_misses = pipelined_always_taken_inst.IF_flush;
-  assign br_instr  = pipelined_always_taken_inst.EX_is_jmp;
-  assign instr     = pipelined_always_taken_inst.IF_Instr;
+  assign br_instr  = pipelined_always_taken_inst.EXMEM_is_jmp;
+  assign instr     = pipelined_always_taken_inst.IF_instr;
 
 
   // Pipelined_two_bit_predictor Pipelined_two_bit_predictor_inst (
@@ -45,8 +45,8 @@ module top
   // );
 
   // assign br_misses = Pipelined_two_bit_predictor_inst.IF_flush;
-  // assign br_instr  = Pipelined_two_bit_predictor_inst.EX_is_jmp;
-  // assign instr     = Pipelined_two_bit_predictor_inst.IF_Instr;
+  // assign br_instr  = Pipelined_two_bit_predictor_inst.EXMEM_is_jmp;
+  // assign instr     = Pipelined_two_bit_predictor_inst.IF_instr;
 
   // Pipelined_gshare_predictor Pipelined_gshare_predictor_inst (
   //   .clk_i (clk_i),
@@ -54,8 +54,8 @@ module top
   // );
 
   // assign br_misses = Pipelined_gshare_predictor_inst.IF_flush;
-  // assign br_instr  = Pipelined_gshare_predictor_inst.EX_is_jmp;
-  // assign instr     = Pipelined_gshare_predictor_inst.IF_Instr;
+  // assign br_instr  = Pipelined_gshare_predictor_inst.EXMEM_is_jmp;
+  // assign instr     = Pipelined_gshare_predictor_inst.IF_instr;
 
   // Pipelined_agree_predictor Pipelined_agree_predictor_inst (
   //   .clk_i (clk_i),
@@ -63,7 +63,7 @@ module top
   // );
 
   // assign br_misses = Pipelined_agree_predictor_inst.IF_flush;
-  // assign br_instr  = Pipelined_agree_predictor_inst.EX_is_jmp;
-  // assign instr     = Pipelined_agree_predictor_inst.IF_Instr;
+  // assign br_instr  = Pipelined_agree_predictor_inst.EXMEM_is_jmp;
+  // assign instr     = Pipelined_agree_predictor_inst.IF_instr;
 
 endmodule : top

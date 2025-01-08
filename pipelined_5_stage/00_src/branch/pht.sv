@@ -21,7 +21,7 @@ module pht #(
     logic [1:0] pht_table [0:(TABLE_SIZE-1)];
 
     always_ff @(posedge clk_i or negedge rst_ni) begin
-        if (rst_ni) begin
+        if (!rst_ni) begin
             for (i=0; i<TABLE_SIZE; i=i+1) begin
                 pht_table[i] <= WEAKLY_NOT_TAKEN; //Initial state is strongly not taken
             end

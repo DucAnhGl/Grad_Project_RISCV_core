@@ -14,7 +14,7 @@ module alu (
     assign {carry,temp} = operand_a_i + not_operand_b + 32'h1;
     assign overflow     = (operand_a_i[31] ^ operand_b_i[31]) & (operand_a_i[31] ^ temp[31]);
     assign signed_lt    = temp[31] ^ overflow;
-    assign unsigned_lt  = carry;
+    assign unsigned_lt  = ~carry;
 
     sll u1(
         .operand_a_i(operand_a_i),

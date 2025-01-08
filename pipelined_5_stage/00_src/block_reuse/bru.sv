@@ -16,7 +16,7 @@ module bru (
     assign {carry,sub} = rs1_data_i + not_rs2_data + 32'b1;
     assign overflow = (rs1_data_i[31] ^ rs2_data_i[31]) & (rs1_data_i[31] ^ sub[31]); 
 
-    assign br_less_uns = carry;
+    assign br_less_uns = ~carry;
     assign br_equal = (sub==0) ? 1 : 0;
     assign br_less = sub[31] ^ overflow;
 

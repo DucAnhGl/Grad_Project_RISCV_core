@@ -8,7 +8,7 @@ module ghr #(
 );  
 
     always_ff @(posedge clk_i or negedge rst_ni) begin
-        if (rst_ni) begin
+        if (!rst_ni) begin
             ghr_data_o <= 0;
         end else begin
             if (update_en_i) begin

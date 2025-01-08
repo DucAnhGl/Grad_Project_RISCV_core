@@ -28,7 +28,7 @@ module agree_btb #(
 
     //Sync write:
     always @(posedge clk_i or negedge rst_ni) begin
-        if (rst_ni) begin
+        if (!rst_ni) begin
             for (i=0; i<TABLE_SIZE; i=i+1) begin
                 valid_table [i] <= 0; 
                 //bias_table  [i] <= 0;

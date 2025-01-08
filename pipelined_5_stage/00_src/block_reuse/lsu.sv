@@ -101,7 +101,7 @@ module lsu (
     // Load-Store for data_mem
     always @(posedge clk_i or negedge rst_ni) begin
         if (!rst_ni) begin
-            for (integer i = 0; i < 8192; i = i+1) data_mem[i] <= 8'h00;
+            //for (integer i = 0; i < 8192; i = i+1) data_mem[i] <= 8'h00;
         end else begin
             if (cs[0] & lsu_wren_i) begin
                 // Store word 
@@ -123,7 +123,7 @@ module lsu (
     // Load-Store for output_mem
     always @(posedge clk_i or negedge rst_ni) begin
         if (!rst_ni) begin
-            for (integer i = 0; i < 64; i = i+1) output_mem[i] <= 8'h00;
+            //for (integer i = 0; i < 64; i = i+1) output_mem[i] <= 8'h00;
         end else begin
             if (cs[1] & lsu_wren_i) begin
                 // Store word 
@@ -144,7 +144,7 @@ module lsu (
     // Load-Store for input_mem
     always @(posedge clk_i or negedge rst_ni) begin
         if (!rst_ni) begin
-            for (integer i = 0; i < 32; i = i+1) input_mem[i] <= 8'h00;
+            //for (integer i = 0; i < 32; i = i+1) input_mem[i] <= 8'h00;
         end else begin
             {input_mem[5'b0_0000+5'h3], input_mem[5'b0_0000+5'h2], input_mem[5'b0_0000+5'h1], input_mem[5'b0_0000]} <= io_sw_i;
             input_mem[5'b1_0000] <= {4'b0000, io_btn_i};

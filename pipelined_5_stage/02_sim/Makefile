@@ -38,13 +38,13 @@ VERILATOR_FLAGS += --trace-fst
 VERILATOR_FLAGS += --build -j
 
 # Input files for Verilator
-VERILATOR_INPUT = -f filelist ../tb/top.sv --top-module top
+VERILATOR_INPUT = -f filelist ../01_tb/top.sv --top-module top
 
 .PHONY: help
 help:
 	@echo "make [option]"
 	@echo "\tlint    run lint checks for syntax and violations"
-	@echo "\tbuild   verilate and build modules"
+	@echo "\01_tbuild   verilate and build modules"
 	@echo "\tsim     run simulation"
 	@echo "\twave    open waveforms"
 	@echo "\tclean   clean the working folder"
@@ -57,10 +57,10 @@ lint:
 	@$(VERILATOR) $(LINT_FLAGS) $(FILES)
 
 .PHONY: build
-build: InstructionMem.mem #./obj_dir/Vtop 
-#./obj_dir/Vtop: #../tb/tb_top.cpp ../tb/top.sv
+build: #instruction_mem.mem #./obj_dir/Vtop 
+#./obj_dir/Vtop: #../01_tb/tb_top.cpp ../01_tb/top.sv
 	@echo "<>---------------- BUILD ----------------"
-	@$(VERILATOR) $(VERILATOR_FLAGS) $(VERILATOR_INPUT) --exe ../tb/tb_top.cpp
+	@$(VERILATOR) $(VERILATOR_FLAGS) $(VERILATOR_INPUT) --exe ../01_tb/tb_top.cpp
 
 .PHONY: sim
 sim: ./obj_dir/Vtop
@@ -81,10 +81,11 @@ clean:
 .PHONY: all
 all: 
 	make clean
+	make build
 	make sim
 
 .PHONY: hex
 hex:
-	riscv32-unknown-elf-as -o test/out.o ../../programs/agree_friendly_1.asm
-	riscv32-unknown-elf-objcopy -O verilog test/out.o InstructionMem.mem
-	riscv32-unknown-elf-objdump -d test/out.o > test/output.asm
+	riscv32-unknown-elf-as -o asm_output/out.o ../../programs/test_program.asm
+	riscv32-unknown-elf-objcopy -O verilog asm_output/out.o instruction_mem.mem
+	riscv32-unknown-elf-objdump -d asm_output/out.o > asm_output/output.asm

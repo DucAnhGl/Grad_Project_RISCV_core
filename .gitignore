@@ -5,3 +5,5 @@ pipelined_5_stage/02_sim/instruction_mem.mem
 pipelined_5_stage/02_sim/wave.fst
 *.gtkw
 
+pipelined_5_stage/02_sim/asm_output/out.o
+pipelined_5_stage/02_sim/asm_output/output.asm
