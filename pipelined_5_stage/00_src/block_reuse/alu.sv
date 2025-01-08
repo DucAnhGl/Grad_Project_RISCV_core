@@ -1,5 +1,6 @@
 module alu (
-    input  logic [31:0] operand_a_i, operand_b_i,
+    input  logic [31:0] operand_a_i,
+    input  logic [31:0] operand_b_i,
     input  logic [3:0]  alu_op_i,
 
     output logic [31:0] alu_data_o

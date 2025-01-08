@@ -1,7 +1,7 @@
 module imem (
-    input  logic [31:0] i_addr,
+    input  logic [31:0] addr_i,
 
-    output logic [31:0] o_data
+    output logic [31:0] data_o
 );
 
     logic [7:0] instr_mem [0:8191];
@@ -9,6 +9,6 @@ module imem (
     initial
     $readmemh("../02_test/dump/mem.dump",instr_mem);
 
-    assign o_data = {instr_mem[i_addr+32'h0000_0003], instr_mem[i_addr+32'h0000_0002], instr_mem[i_addr+32'h0000_0001], instr_mem[i_addr]};
+    assign data_o = {instr_mem[addr_i+32'h0000_0003], instr_mem[addr_i+32'h0000_0002], instr_mem[addr_i+32'h0000_0001], instr_mem[addr_i]};
 
 endmodule

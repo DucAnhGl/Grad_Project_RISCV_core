@@ -1,9 +1,13 @@
 module fwd_unit(
-    input  logic [4:0] IDEX_rs1_i, IDEX_rs2_i,
-    input  logic [4:0] EXMEM_rd_i, MEMWB_rd_i,       
-    input  logic       EXMEM_rd_wren_i, MEMWB_rd_wren_i,
+    input  logic [4:0] IDEX_rs1_i,
+    input  logic [4:0] IDEX_rs2_i,
+    input  logic [4:0] EXMEM_rd_i,
+    input  logic [4:0] MEMWB_rd_i,
+    input  logic       EXMEM_rd_wren_i,
+    input  logic       MEMWB_rd_wren_i,
 
-    output logic [1:0] rs1_sel_o, rs2_sel_o
+    output logic [1:0] rs1_sel_o,
+    output logic [1:0] rs2_sel_o
 );
     always @(*) begin
         if (EXMEM_rd_wren_i && (EXMEM_rd_i != 0) && (EXMEM_rd_i == IDEX_rs1_i))
