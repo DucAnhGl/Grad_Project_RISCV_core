@@ -1,0 +1,7 @@
+
+pipelined_5_stage/02_sim/instruction_mem.mem
+/pipelined_5_stage/02_sim/obj_dir
+/pipelined_5_stage/02_sim/test
+pipelined_5_stage/02_sim/wave.fst
+*.gtkw
+
