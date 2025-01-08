@@ -1,5 +1,5 @@
 module hdu (
-    input  logic       IDEX_rdwren_i,
+    input  logic       IDEX_rd_wren_i,
     input  logic       IDEX_mem_rden_i,
     input  logic       br_flush_i,
 

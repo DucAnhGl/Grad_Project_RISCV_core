@@ -94,8 +94,8 @@ localparam INDEX_WIDTH = 12;
 /*==============================   IF STAGE   ==============================*/
     // Instruction mem
     imem inst_imem(
-        .i_addr(IF_pc),
-        .o_data(IF_instr)
+        .addr_i (IF_pc),
+        .data_o (IF_instr)
     );
 
     // Branch predictor

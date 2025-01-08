@@ -3,9 +3,9 @@ module bru (
     input  logic [31:0] rs2_data_i,
     input  logic        is_br_i,
     input  logic        is_uncbr_i,
-    input  logic [2:0]  func3_i,
+    input  logic [2:0]  funct3_i,
 
-    output logic        pc_sel_o
+    output logic        true_br_decision_o
 );
     logic [31:0] sub, not_rs2_data;
     logic overflow, carry;
