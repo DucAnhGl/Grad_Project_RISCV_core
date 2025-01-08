@@ -1,13 +1,21 @@
 module always_taken (
-    input  logic        i_clk,      // Global clock, active on the rising edge
-    input  logic        i_rstn,     // Global low active reset
+    input  logic        clk_i,      // Global clock, active on the rising edge
+    input  logic        rst_ni,     // Global low active reset
     input  logic [31:0] i_io_sw,    // Input for switches
     input  logic [3:0]  i_io_btn,   // Input for buttons
+
     output logic [31:0] o_pc_debug, // Debug program counter
     output logic        o_insn_vld, // Instruction valid
     output logic [31:0] o_io_ledr,  // Output for driving red LEDs
     output logic [31:0] o_io_ledg,  // Output for driving green LEDs
-    output logic [6:0]  o_io_hex0, o_io_hex1, o_io_hex2, o_io_hex3, o_io_hex4, o_io_hex5, o_io_hex6, o_io_hex7,   // Output for driving 7-segment LED displays
+    output logic [6:0]  o_io_hex0,  // Output for driving 7-segment LED display
+                        o_io_hex1,  // Output for driving 7-segment LED display
+                        o_io_hex2,  // Output for driving 7-segment LED display
+                        o_io_hex3,  // Output for driving 7-segment LED display
+                        o_io_hex4,  // Output for driving 7-segment LED display
+                        o_io_hex5,  // Output for driving 7-segment LED display
+                        o_io_hex6,  // Output for driving 7-segment LED display
+                        o_io_hex7,  // Output for driving 7-segment LED display
     output logic [31:0] o_io_lcd    // Output for driving the LCD register
 	 
 	 // output to SRAM
@@ -98,8 +106,8 @@ localparam INDEX_WIDTH = 12;
     always_taken_predictor #(
         .INDEX_WIDTH(INDEX_WIDTH)
     ) inst_predictor (
-        .clk_i                 (i_clk),                            
-        .rst_i                 (i_rstn),                            
+        .clk_i                 (clk_i),                            
+        .rst_i                 (rst_ni),                            
         .IF_PC_tag_i           (IF_pc[31:(INDEX_WIDTH+2)]),                      
         .IF_btb_rd_index_i     (IF_pc[(INDEX_WIDTH+1):2]),                
         .EXMEM_btb_wr_index_i  (EXMEM_pc[(INDEX_WIDTH+1):2]),             
@@ -118,8 +126,8 @@ localparam INDEX_WIDTH = 12;
 
 
     //PC reg: async rstn, sync wren
-    always @(posedge i_clk or negedge i_rstn) begin
-        if (!i_rstn) IF_pc <= 32'h0000_0000;
+    always @(posedge clk_i or negedge rst_ni) begin
+        if (!rst_ni) IF_pc <= 32'h0000_0000;
         else begin
             if (pc_wren) IF_pc <= IF_pcnext;
             else IF_pc <= IF_pc; 
@@ -135,8 +143,8 @@ localparam INDEX_WIDTH = 12;
                        (IF_PCnext_sel == 2'b10) ? IF_btb_rd_target : EXMEM_br_addr;
 
     // IFID pipeline register:
-    always @(posedge i_clk or negedge i_rstn) begin
-        if (!i_rstn) begin
+    always @(posedge clk_i or negedge rst_ni) begin
+        if (!rst_ni) begin
             IFID_pc      <= 32'h0000_0000;
             IFID_pcplus4 <= 32'h0000_0000;
             IFID_instr   <= 32'h0000_0000;
@@ -181,9 +189,9 @@ ctrl_unit inst_ctrl_unit (
 );
 
 regfile inst_regfile (
-    .clk_i    (i_clk),     
+    .clk_i    (clk_i),     
     .rd_wren  (MEMWB_rd_wren),   
-    .rst_ni   (i_rstn),    
+    .rst_ni   (rst_ni),    
     .rd_addr  (MEMWB_rd),   
     .rs1_addr (IFID_rs1),  
     .rs2_addr (IFID_rs2),  
@@ -198,8 +206,8 @@ immgen inst_immgen (
 );
 
 //IDEX pipeline register: async rstn, sync clr
-always @(posedge i_clk or negedge i_rstn) begin
-        if (!i_rstn) begin
+always @(posedge clk_i or negedge rst_ni) begin
+        if (!rst_ni) begin
             //Control signals
             IDEX_insn_vld <= 1'b0;
             IDEX_is_br    <= 1'b0;
@@ -310,8 +318,8 @@ bru inst_bru (
 );
 
 //EXMEM pipeline register: async rstn, sync clr
-always @(posedge i_clk or negedge i_rstn) begin
-        if (!i_rstn) begin
+always @(posedge clk_i or negedge rst_ni) begin
+        if (!rst_ni) begin
             //Control signals
             EXMEM_insn_vld <= 1'b0;
             EXMEM_is_br    <= 1'b0;
@@ -380,8 +388,8 @@ end
 
 /*==============================   MEM STAGE   ==============================*/
 lsu inst_lsu (
-    .i_clk      (i_clk),      
-    .i_rst_n    (i_rstn),    
+    .clk_i      (clk_i),      
+    .i_rst_n    (rst_ni),    
     .i_lsu_wren (EXMEM_mem_wren), 
     //.i_lsu_rden (EXMEM_mem_rden), 
     .i_func3    (EXMEM_func3),    
@@ -404,8 +412,8 @@ lsu inst_lsu (
 );
 
 //MEMWB pipeline register: async rstn
-always @(posedge i_clk or negedge i_rstn) begin
-        if (!i_rstn) begin
+always @(posedge clk_i or negedge rst_ni) begin
+        if (!rst_ni) begin
             //Control signals
             MEMWB_insn_vld <= 1'b0;
             MEMWB_rd_wren  <= 1'b0;
