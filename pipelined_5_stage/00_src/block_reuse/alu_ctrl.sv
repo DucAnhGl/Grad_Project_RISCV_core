@@ -23,7 +23,7 @@ module alu_ctrl (
 				else if ( (funct3_i==3'b101) && (funct7_i==7'b0000000) ) alu_op_o = 4'h8; // Srl
 				else if ( (funct3_i==3'b101) && (funct7_i==7'b0100000) ) alu_op_o = 4'h9; // Sra
 				
-				
+                else    alu_op_o = 4'h0;    
 			end
 
 			2'b01: alu_op_o = 4'h0; // Load-Store, AUIPC: Add
