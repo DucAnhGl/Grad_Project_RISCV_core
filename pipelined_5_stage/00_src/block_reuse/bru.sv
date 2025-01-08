@@ -1,8 +1,10 @@
 module bru (
-    input  logic [31:0] rs1_data_i, rs2_data_i,
-    input  logic [0:0]  is_br_i, is_uncbr_i,
+    input  logic [31:0] rs1_data_i,
+    input  logic [31:0] rs2_data_i,
+    input  logic        is_br_i,
+    input  logic        is_uncbr_i,
     input  logic [2:0]  func3_i,
-    
+
     output logic        pc_sel_o
 );
     logic [31:0] sub;

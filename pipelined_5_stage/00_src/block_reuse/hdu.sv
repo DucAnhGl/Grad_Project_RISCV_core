@@ -1,10 +1,16 @@
 module hdu (
-    input  logic       IDEX_rdwren_i, IDEX_mem_rden_i, br_flush_i,   
+    input  logic       IDEX_rdwren_i,
+    input  logic       IDEX_mem_rden_i,
+    input  logic       br_flush_i,
     input  logic [4:0] IDEX_rd_i,
-    input  logic [4:0] IFID_rs1_i, IFID_rs2_i,
+    input  logic [4:0] IFID_rs1_i,
+    input  logic [4:0] IFID_rs2_i,
 
-    output logic       IFID_clear_o, IDEX_clear_o, EXMEM_clear_o, 
-                       IFID_wren_o, pc_wren_o  
+    output logic       IFID_clear_o,
+    output logic       IDEX_clear_o,
+    output logic       EXMEM_clear_o,
+    output logic       IFID_wren_o,
+    output logic       pc_wren_o
 );
     always @(*) begin
         if (br_flush_i) begin
