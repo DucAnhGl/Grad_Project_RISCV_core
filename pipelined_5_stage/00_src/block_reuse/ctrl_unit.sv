@@ -31,44 +31,44 @@ always @(*) begin
 	case (instr_i[6:0])
 		R_type      : begin
 						rd_wren_o = 1'b1; mem_wren_o = 1'b0; mem_rden_o = 1'b0; op_a_sel_o = 1'b0; op_b_sel_o = 2'b00; wb_sel_o = 1'b0;
-					    is_br_o = 1'b0; is_uncbr_o = 2'b00;
+					    is_br_o = 1'b0; is_uncbr_o = 2'b00; alu_ctrl_o = 2'b00;
 					  end
 
 		I_type_IMM  : begin
 			          	rd_wren_o = 1'b1; mem_wren_o = 1'b0; mem_rden_o = 1'b0; op_a_sel_o = 1'b0; op_b_sel_o = 2'b01; wb_sel_o = 1'b0;
-					  	is_br_o = 1'b0; is_uncbr_o = 2'b00;
+					  	is_br_o = 1'b0; is_uncbr_o = 2'b00; alu_ctrl_o = 2'b00;
 		end
 		I_type_JALR : begin
 			          	rd_wren_o = 1'b1; mem_wren_o = 1'b0; mem_rden_o = 1'b0; op_a_sel_o = 1'b0; op_b_sel_o = 2'b10; wb_sel_o = 1'b0;
-					  	is_br_o = 1'b0; is_uncbr_o = 2'b11; alu_ctrl_o = 4'b1010;
+					  	is_br_o = 1'b0; is_uncbr_o = 2'b11; alu_ctrl_o = 2'b10;
 		end
 		I_type_LD   : begin
 			          	rd_wren_o = 1'b1; mem_wren_o = 1'b0; mem_rden_o = 1'b1; op_a_sel_o = 1'b0; op_b_sel_o = 2'b01; wb_sel_o = 1'b1;
-					  	is_br_o = 1'b0; is_uncbr_o = 2'b00; alu_ctrl_o = 4'b0000;
+					  	is_br_o = 1'b0; is_uncbr_o = 2'b00; alu_ctrl_o = 2'b01;
 		end
         B_type      : begin
                       	rd_wren_o = 1'b0; mem_wren_o = 1'b0; mem_rden_o = 1'b0; op_a_sel_o = 1'b0; op_b_sel_o = 2'b00; wb_sel_o = 1'b0;
-					  	is_br_o = 1'b1; is_uncbr_o = 2'b00; alu_ctrl_o = 4'b0000;
+					  	is_br_o = 1'b1; is_uncbr_o = 2'b00; alu_ctrl_o = 2'b00;
 		end
 		S_type      : begin
                       	rd_wren_o = 1'b0; mem_wren_o = 1'b1; mem_rden_o = 1'b0; op_a_sel_o = 1'b0; op_b_sel_o = 2'b01; wb_sel_o = 1'b0;
-					  	is_br_o = 1'b0; is_uncbr_o = 2'b00; alu_ctrl_o = 4'b0000;
+					  	is_br_o = 1'b0; is_uncbr_o = 2'b00; alu_ctrl_o = 2'b01;
 		end
 		J_type      : begin
                       	rd_wren_o = 1'b1; mem_wren_o = 1'b0; mem_rden_o = 1'b0; op_a_sel_o = 1'b0; op_b_sel_o = 2'b10; wb_sel_o = 1'b0;
-					  	is_br_o = 1'b0; is_uncbr_o = 2'b10; alu_ctrl_o = 4'b1010;
+					  	is_br_o = 1'b0; is_uncbr_o = 2'b10; alu_ctrl_o = 2'b10;
 		end
 		U_type_LUI  : begin
                       	rd_wren_o = 1'b1; mem_wren_o = 1'b0; mem_rden_o = 1'b0; op_a_sel_o = 1'b0; op_b_sel_o = 2'b01; wb_sel_o = 1'b0;
-					  	is_br_o = 1'b0; is_uncbr_o = 2'b00; alu_ctrl_o = 4'b1010;
+					  	is_br_o = 1'b0; is_uncbr_o = 2'b00; alu_ctrl_o = 2'b10;
 		end
 		U_type_AUIPC: begin
                       	rd_wren_o = 1'b1; mem_wren_o = 1'b0; mem_rden_o = 1'b0; op_a_sel_o = 1'b1; op_b_sel_o = 2'b01; wb_sel_o = 1'b0;
-					  	is_br_o = 1'b0; is_uncbr_o = 2'b00; alu_ctrl_o = 4'b0000;
+					  	is_br_o = 1'b0; is_uncbr_o = 2'b00; alu_ctrl_o = 2'b00;
 		end
 		default:      begin
 					  	rd_wren_o = 1'b0; mem_wren_o = 1'b0; mem_rden_o = 1'b0; op_a_sel_o = 1'b0; op_b_sel_o = 2'b00; wb_sel_o = 1'b0;
-					  	is_br_o = 1'b0; is_uncbr_o = 2'b00; alu_ctrl_o = 4'b0000;
+					  	is_br_o = 1'b0; is_uncbr_o = 2'b00; alu_ctrl_o = 2'b00;
 		end
                     
 	endcase
