@@ -1,5 +1,5 @@
 module lsu (
-    input  logic        clk_i, rst_n_i, lsu_wren_i, //i_l_unsigned,
+    input  logic        clk_i, rst_n_i, lsu_wren_i,
     input  logic [2:0]  funct3_i,       
     input  logic [31:0] st_data_i, io_sw_i, io_btn_i, lsu_addr_i,
     output logic [31:0] ld_data_o, io_lcd_o, io_ledg_o, io_ledr_o,
@@ -14,13 +14,13 @@ module lsu (
     logic [5:0]  output_mem_addr;
     logic [31:0] data_mem_out, output_mem_out, input_mem_out;
 
-    logic i_l_unsigned;
-    logic [1:0] i_s_length;
-    logic [1:0] i_l_length;
+    logic l_unsigned;
+    logic [1:0] s_length;
+    logic [1:0] l_length;
 
-    assign i_s_length   = funct3_i[1:0];
-    assign i_l_length   = funct3_i[1:0];
-    assign i_l_unsigned = funct3_i[2];
+    assign s_length   = funct3_i[1:0];
+    assign l_length   = funct3_i[1:0];
+    assign l_unsigned = funct3_i[2];
 
 
     // Declare memory space
@@ -71,7 +71,7 @@ module lsu (
 
     // Length select and sign extend
     always @(*) begin
-            case({i_l_unsigned, i_l_length})
+            case({l_unsigned, l_length})
                 3'b100:  ld_data_o = {24'b0, ld_temp_data[7:0]};
                 3'b101:  ld_data_o = {16'b0, ld_temp_data[15:0]}; 
 
@@ -90,11 +90,11 @@ module lsu (
         end else begin
             if (cs[0] & lsu_wren_i) begin
                 // Store word 
-                if (i_s_length == 2'b10) {data_mem[data_mem_addr+13'h3], data_mem[data_mem_addr+13'h2], data_mem[data_mem_addr+13'h1], data_mem[data_mem_addr]} <= st_data_i;
+                if (s_length == 2'b10) {data_mem[data_mem_addr+13'h3], data_mem[data_mem_addr+13'h2], data_mem[data_mem_addr+13'h1], data_mem[data_mem_addr]} <= st_data_i;
                 //Store half-word
-                else if (i_s_length == 2'b01) {data_mem[data_mem_addr+13'h1], data_mem[data_mem_addr]} <= st_data_i[15:0];
+                else if (s_length == 2'b01) {data_mem[data_mem_addr+13'h1], data_mem[data_mem_addr]} <= st_data_i[15:0];
                 //Store byte
-                else if (i_s_length == 2'b00) data_mem[data_mem_addr] <= st_data_i[7:0];
+                else if (s_length == 2'b00) data_mem[data_mem_addr] <= st_data_i[7:0];
                 //Other cases
                 else data_mem[data_mem_addr] <= data_mem[data_mem_addr];
             end
@@ -112,11 +112,11 @@ module lsu (
         end else begin
             if (cs[1] & lsu_wren_i) begin
                 // Store word 
-                if (i_s_length == 2'b10) {output_mem[output_mem_addr+6'h3], output_mem[output_mem_addr+6'h2], output_mem[output_mem_addr+6'h1], output_mem[output_mem_addr]} <= st_data_i;
+                if (s_length == 2'b10) {output_mem[output_mem_addr+6'h3], output_mem[output_mem_addr+6'h2], output_mem[output_mem_addr+6'h1], output_mem[output_mem_addr]} <= st_data_i;
                 //Store half-word
-                else if (i_s_length == 2'b01) {output_mem[output_mem_addr+6'h1], output_mem[output_mem_addr]} <= st_data_i[15:0];
+                else if (s_length == 2'b01) {output_mem[output_mem_addr+6'h1], output_mem[output_mem_addr]} <= st_data_i[15:0];
                 //Store byte
-                else if (i_s_length == 2'b00) output_mem[output_mem_addr] <= st_data_i[7:0];
+                else if (s_length == 2'b00) output_mem[output_mem_addr] <= st_data_i[7:0];
                 //Other cases
                 else output_mem[output_mem_addr] <= output_mem[output_mem_addr];
             end

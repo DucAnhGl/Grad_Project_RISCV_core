@@ -1,24 +1,26 @@
 module regfile (
-    input         clk_i, rd_wren, rst_ni,
-    input  [4:0]  rd_addr, rs1_addr, rs2_addr,
-    input  [31:0] rd_data,
-    output [31:0] rs1_data, rs2_data
+    input  logic        clk_i, rst_n_i, 
+    input  logic        rd_wren_i,
+    input  logic [4:0]  rd_addr_i, rs1_addr_i, rs2_addr_i,
+    input  logic [31:0] rd_data_i,
+
+    output logic [31:0] rs1_data_o, rs2_data_o
 );
     
 // Register file initialization
-    reg [31:0] register[0:31];
+    logic [31:0] register[0:31];
 
 // Write operation
-    always @(posedge clk_i or negedge rst_ni) begin
-        if (!rst_ni) begin
+    always @(posedge clk_i or negedge rst_n_i) begin
+        if (!rst_n_i) begin
             for (integer i = 0; i < 32; i++) begin
                 register[i] <= '0;
             end
-        end else if (rd_wren && rd_addr) register[rd_addr] <= rd_data;
+        end else if (rd_wren_i && rd_addr_i) register[rd_addr_i] <= rd_data_i;
     end
 
 // Read operation
-    assign rs1_data = ((rd_addr != 5'b00_000) && (rd_addr == rs1_addr) && rd_wren) ? rd_data : register[rs1_addr];
-    assign rs2_data = ((rd_addr != 5'b00_000) && (rd_addr == rs2_addr) && rd_wren) ? rd_data : register[rs2_addr];
+    assign rs1_data_o = ((rd_addr_i != 5'b00_000) && (rd_addr_i == rs1_addr_i) && rd_wren_i) ? rd_data_i : register[rs1_addr_i];
+    assign rs2_data_o = ((rd_addr_i != 5'b00_000) && (rd_addr_i == rs2_addr_i) && rd_wren_i) ? rd_data_i : register[rs2_addr_i];
 
 endmodule
