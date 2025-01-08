@@ -1,6 +1,6 @@
 module immgen (
-	input [31:0] instruction_i,
-    output reg [31:0] immediate_o	
+	input  logic [31:0] instruction_i,
+    output logic [31:0] immediate_o	
 );
 
 

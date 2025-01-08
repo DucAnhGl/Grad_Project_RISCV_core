@@ -1,64 +1,61 @@
 module lsu (
-    input             i_clk, i_rst_n, i_lsu_wren, //i_l_unsigned,
-    // input  [1:0]      i_s_length, 
-    // input  [2:0]      i_l_length,
-    input      [2:0]  i_func3,       
-    input      [31:0] i_st_data, i_io_sw, i_io_btn, i_lsu_addr,
-    output reg [31:0] o_ld_data, o_io_lcd, o_io_ledg, o_io_ledr,
-                       
-    output reg [6:0]  o_io_hex0, o_io_hex1, o_io_hex2, o_io_hex3,
-                      o_io_hex4, o_io_hex5, o_io_hex6, o_io_hex7
+    input  logic        clk_i, rst_n_i, lsu_wren_i, //i_l_unsigned,
+    input  logic [2:0]  funct3_i,       
+    input  logic [31:0] st_data_i, io_sw_i, io_btn_i, lsu_addr_i,
+    output logic [31:0] ld_data_o, io_lcd_o, io_ledg_o, io_ledr_o,
+    output logic [6:0]  io_hex0_o, io_hex1_o, io_hex2_o, io_hex3_o,
+                        io_hex4_o, io_hex5_o, io_hex6_o, io_hex7_o
 );
 
-    reg  [2:0]  cs;
-    reg  [31:0] ld_temp_data;
-    wire [12:0] data_mem_addr;
-    wire [4:0]  input_mem_addr;
-    wire [5:0]  output_mem_addr;
-    wire [31:0] data_mem_out, output_mem_out, input_mem_out;
+    logic [2:0]  cs;
+    logic [31:0] ld_temp_data;
+    logic [12:0] data_mem_addr;
+    logic [4:0]  input_mem_addr;
+    logic [5:0]  output_mem_addr;
+    logic [31:0] data_mem_out, output_mem_out, input_mem_out;
 
-    wire i_l_unsigned;
-    wire [1:0] i_s_length;
-    wire [1:0] i_l_length;
+    logic i_l_unsigned;
+    logic [1:0] i_s_length;
+    logic [1:0] i_l_length;
 
-    assign i_s_length   = i_func3[1:0];
-    assign i_l_length   = i_func3[1:0];
-    assign i_l_unsigned = i_func3[2];
+    assign i_s_length   = funct3_i[1:0];
+    assign i_l_length   = funct3_i[1:0];
+    assign i_l_unsigned = funct3_i[2];
 
 
     // Declare memory space
-    reg [7:0] data_mem[0:8191];
-    reg [7:0] input_mem[0:31];
-    reg [7:0] output_mem[0:63];
+    logic [7:0] data_mem[0:8191];
+    logic [7:0] input_mem[0:31];
+    logic [7:0] output_mem[0:63];
 
-    assign data_mem_addr   = i_lsu_addr[12:0]; 
-    assign input_mem_addr  = i_lsu_addr[4:0];
-    assign output_mem_addr = i_lsu_addr[5:0];
+    assign data_mem_addr   = lsu_addr_i[12:0]; 
+    assign input_mem_addr  = lsu_addr_i[4:0];
+    assign output_mem_addr = lsu_addr_i[5:0];
 
     // Mapping for output memory
-    assign o_io_ledr = {output_mem[6'b00_0000+6'h3], output_mem[6'b00_0000+6'h2], output_mem[6'b00_0000+6'h1], output_mem[6'b00_0000]};
-    assign o_io_ledg = {output_mem[6'b01_0000+6'h3], output_mem[6'b01_0000+6'h2], output_mem[6'b01_0000+6'h1], output_mem[6'b01_0000]};
+    assign io_ledr_o = {output_mem[6'b00_0000+6'h3], output_mem[6'b00_0000+6'h2], output_mem[6'b00_0000+6'h1], output_mem[6'b00_0000]};
+    assign io_ledg_o = {output_mem[6'b01_0000+6'h3], output_mem[6'b01_0000+6'h2], output_mem[6'b01_0000+6'h1], output_mem[6'b01_0000]};
 
-    assign o_io_hex0 = output_mem[6'b10_0000][6:0];
-    assign o_io_hex1 = output_mem[6'b10_0001][6:0];
-    assign o_io_hex2 = output_mem[6'b10_0010][6:0];
-    assign o_io_hex3 = output_mem[6'b10_0011][6:0];
-    assign o_io_hex4 = output_mem[6'b10_0100][6:0];
-    assign o_io_hex5 = output_mem[6'b10_0101][6:0];
-    assign o_io_hex6 = output_mem[6'b10_0110][6:0];
-    assign o_io_hex7 = output_mem[6'b10_0111][6:0];
+    assign io_hex0_o = output_mem[6'b10_0000][6:0];
+    assign io_hex1_o = output_mem[6'b10_0001][6:0];
+    assign io_hex2_o = output_mem[6'b10_0010][6:0];
+    assign io_hex3_o = output_mem[6'b10_0011][6:0];
+    assign io_hex4_o = output_mem[6'b10_0100][6:0];
+    assign io_hex5_o = output_mem[6'b10_0101][6:0];
+    assign io_hex6_o = output_mem[6'b10_0110][6:0];
+    assign io_hex7_o = output_mem[6'b10_0111][6:0];
 
-    assign o_io_lcd  = {output_mem[6'b11_0000+6'h3], output_mem[6'b11_0000+6'h2], output_mem[6'b11_0000+6'h1], output_mem[6'b11_0000]}; 
+    assign io_lcd_o  = {output_mem[6'b11_0000+6'h3], output_mem[6'b11_0000+6'h2], output_mem[6'b11_0000+6'h1], output_mem[6'b11_0000]}; 
 
     // Mapping for input memory
-    // assign i_io_sw   = {input_mem[5'b0_0000+5'h3], input_mem[5'b0_0000+5'h2], input_mem[5'b0_0000+5'h1], input_mem[5'b0_0000]};
-    // assign i_io_btn  = input_mem[5'b1_0000][3:0];
+    // assign io_sw_i   = {input_mem[5'b0_0000+5'h3], input_mem[5'b0_0000+5'h2], input_mem[5'b0_0000+5'h1], input_mem[5'b0_0000]};
+    // assign io_btn_i  = input_mem[5'b1_0000][3:0];
 
     // cs combinational logic
     always @(*) begin
-        if (i_lsu_addr[15:13] == 3'b001) cs = 3'b001;
-        else if (i_lsu_addr[15:6] == 10'b0111_0000_00) cs = 3'b010;
-        else if (i_lsu_addr[15:5] == 11'b0111_1000_000) cs = 3'b100;
+        if (lsu_addr_i[15:13] == 3'b001) cs = 3'b001;
+        else if (lsu_addr_i[15:6] == 10'b0111_0000_00) cs = 3'b010;
+        else if (lsu_addr_i[15:5] == 11'b0111_1000_000) cs = 3'b100;
         else cs = 3'b000; 
     end
 
@@ -75,29 +72,29 @@ module lsu (
     // Length select and sign extend
     always @(*) begin
             case({i_l_unsigned, i_l_length})
-                3'b100:  o_ld_data = {24'b0, ld_temp_data[7:0]};
-                3'b101:  o_ld_data = {16'b0, ld_temp_data[15:0]}; 
+                3'b100:  ld_data_o = {24'b0, ld_temp_data[7:0]};
+                3'b101:  ld_data_o = {16'b0, ld_temp_data[15:0]}; 
 
-                3'b000:  o_ld_data = {{24{ld_temp_data[7]}}, ld_temp_data[7:0]};
-                3'b001:  o_ld_data = {{16{ld_temp_data[15]}}, ld_temp_data[15:0]};
-                3'b010:  o_ld_data = ld_temp_data; 
-                default: o_ld_data = 32'b0011001100110011; //debugging
+                3'b000:  ld_data_o = {{24{ld_temp_data[7]}}, ld_temp_data[7:0]};
+                3'b001:  ld_data_o = {{16{ld_temp_data[15]}}, ld_temp_data[15:0]};
+                3'b010:  ld_data_o = ld_temp_data; 
+                default: ld_data_o = 32'b0011001100110011; //debugging
             endcase
     end
 
     /////////////////////////////////////////
     // Load-Store for data_mem
-    always @(posedge i_clk or negedge i_rst_n) begin
-        if (!i_rst_n) begin
+    always @(posedge clk_i or negedge rst_n_i) begin
+        if (!rst_n_i) begin
             for (integer i = 0; i < 8192; i = i+1) data_mem[i] <= 8'h00;
         end else begin
-            if (cs[0] & i_lsu_wren) begin
+            if (cs[0] & lsu_wren_i) begin
                 // Store word 
-                if (i_s_length == 2'b10) {data_mem[data_mem_addr+13'h3], data_mem[data_mem_addr+13'h2], data_mem[data_mem_addr+13'h1], data_mem[data_mem_addr]} <= i_st_data;
+                if (i_s_length == 2'b10) {data_mem[data_mem_addr+13'h3], data_mem[data_mem_addr+13'h2], data_mem[data_mem_addr+13'h1], data_mem[data_mem_addr]} <= st_data_i;
                 //Store half-word
-                else if (i_s_length == 2'b01) {data_mem[data_mem_addr+13'h1], data_mem[data_mem_addr]} <= i_st_data[15:0];
+                else if (i_s_length == 2'b01) {data_mem[data_mem_addr+13'h1], data_mem[data_mem_addr]} <= st_data_i[15:0];
                 //Store byte
-                else if (i_s_length == 2'b00) data_mem[data_mem_addr] <= i_st_data[7:0];
+                else if (i_s_length == 2'b00) data_mem[data_mem_addr] <= st_data_i[7:0];
                 //Other cases
                 else data_mem[data_mem_addr] <= data_mem[data_mem_addr];
             end
@@ -109,17 +106,17 @@ module lsu (
     
     /////////////////////////////////////////
     // Load-Store for output_mem
-    always @(posedge i_clk or negedge i_rst_n) begin
-        if (!i_rst_n) begin
+    always @(posedge clk_i or negedge rst_n_i) begin
+        if (!rst_n_i) begin
             for (integer i = 0; i < 64; i = i+1) output_mem[i] <= 8'h00;
         end else begin
-            if (cs[1] & i_lsu_wren) begin
+            if (cs[1] & lsu_wren_i) begin
                 // Store word 
-                if (i_s_length == 2'b10) {output_mem[output_mem_addr+6'h3], output_mem[output_mem_addr+6'h2], output_mem[output_mem_addr+6'h1], output_mem[output_mem_addr]} <= i_st_data;
+                if (i_s_length == 2'b10) {output_mem[output_mem_addr+6'h3], output_mem[output_mem_addr+6'h2], output_mem[output_mem_addr+6'h1], output_mem[output_mem_addr]} <= st_data_i;
                 //Store half-word
-                else if (i_s_length == 2'b01) {output_mem[output_mem_addr+6'h1], output_mem[output_mem_addr]} <= i_st_data[15:0];
+                else if (i_s_length == 2'b01) {output_mem[output_mem_addr+6'h1], output_mem[output_mem_addr]} <= st_data_i[15:0];
                 //Store byte
-                else if (i_s_length == 2'b00) output_mem[output_mem_addr] <= i_st_data[7:0];
+                else if (i_s_length == 2'b00) output_mem[output_mem_addr] <= st_data_i[7:0];
                 //Other cases
                 else output_mem[output_mem_addr] <= output_mem[output_mem_addr];
             end
@@ -130,12 +127,12 @@ module lsu (
 
     ///////////////////////////////////////////
     // Load-Store for input_mem
-    always @(posedge i_clk or negedge i_rst_n) begin
-        if (!i_rst_n) begin
+    always @(posedge clk_i or negedge rst_n_i) begin
+        if (!rst_n_i) begin
             for (integer i = 0; i < 32; i = i+1) input_mem[i] <= 8'h00;
         end else begin
-            {input_mem[5'b0_0000+5'h3], input_mem[5'b0_0000+5'h2], input_mem[5'b0_0000+5'h1], input_mem[5'b0_0000]} <= i_io_sw;
-            input_mem[5'b1_0000] <= i_io_btn[7:0];
+            {input_mem[5'b0_0000+5'h3], input_mem[5'b0_0000+5'h2], input_mem[5'b0_0000+5'h1], input_mem[5'b0_0000]} <= io_sw_i;
+            input_mem[5'b1_0000] <= io_btn_i[7:0];
         end
     end
     // Output of input_mem
