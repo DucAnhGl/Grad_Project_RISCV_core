@@ -22,45 +22,45 @@ assign funct3 = instr_i[14:12];
 always @(*) begin
 	case (instr_i[6:0])
 		R_type      : begin
-                        if (funct7 != 7'b0100000 && funct7 != 7'b0000000) insn_vld = 0;
-                        else                                              insn_vld = 1;
+                        if (funct7 != 7'b0100000 && funct7 != 7'b0000000) insn_vld_o = 0;
+                        else                                              insn_vld_o = 1;
 		end
 		I_type_IMM  : begin
                         case (funct3) 
                         3'b001: begin
-                            if (funct7 != 7'b0000000) insn_vld = 0;
-                            else                      insn_vld = 1;
+                            if (funct7 != 7'b0000000) insn_vld_o = 0;
+                            else                      insn_vld_o = 1;
                         end
                         3'b101: begin
-                            if (funct7 != 7'b0100000 && funct7 != 7'b0000000) insn_vld = 0;
-                            else                                              insn_vld = 1;
+                            if (funct7 != 7'b0100000 && funct7 != 7'b0000000) insn_vld_o = 0;
+                            else                                              insn_vld_o = 1;
                         end
-                        default: insn_vld = 1;
+                        default: insn_vld_o = 1;
                         endcase
 		end
 		I_type_JALR : begin
-                        insn_vld = 1;
+                        insn_vld_o = 1;
 		end
 		I_type_LD   : begin
-                        insn_vld = 1;
+                        insn_vld_o = 1;
 		end
         B_type      : begin
-                        insn_vld = 1;
+                        insn_vld_o = 1;
 		end
 		S_type      : begin
-                        insn_vld = 1;
+                        insn_vld_o = 1;
 		end
 		J_type      : begin
-                        insn_vld = 1;
+                        insn_vld_o = 1;
 		end
 		U_type_LUI  : begin
-                        insn_vld = 1;
+                        insn_vld_o = 1;
 		end
 		U_type_AUIPC: begin
-                        insn_vld = 1;
+                        insn_vld_o = 1;
 		end
 		default:      begin
-                        insn_vld = 0;
+                        insn_vld_o = 0;
 		end
                     
 	endcase

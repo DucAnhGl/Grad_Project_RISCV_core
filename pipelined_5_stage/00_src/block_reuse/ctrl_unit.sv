@@ -12,8 +12,6 @@ module ctrl_unit (
 	output logic         wb_sel_o
 );
 
-wire [6:0] func7;
-wire [2:0] func3;
 parameter  R_type       = 7'b0110011,
 	       I_type_LD    = 7'b0000011,
 	       I_type_IMM   = 7'b0010011,
@@ -23,9 +21,6 @@ parameter  R_type       = 7'b0110011,
 	       U_type_LUI   = 7'b0110111,
 		   U_type_AUIPC = 7'b0010111,
 	       J_type       = 7'b1101111;
-
-assign func7 = instr_i[31:25];
-assign func3 = instr_i[14:12];
 
 always @(*) begin
 	case (instr_i[6:0])

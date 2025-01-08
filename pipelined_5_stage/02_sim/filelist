@@ -1,6 +1,7 @@
--y ../src/blocks
--y ../src/branch
+-y ../00_src/block_reuse
+-y ../00_src/branch
 #../src/Pipelined_always_taken.v
 #../src/Pipelined_two_bit_predictor.v
 #../src/Pipelined_gshare_predictor.v
-../src/Pipelined_agree_predictor.v
+../00_src/top_designs/pipelined_always_taken.sv
+

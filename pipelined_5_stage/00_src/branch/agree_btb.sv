@@ -1,7 +1,7 @@
 module agree_btb #(
     INDEX_WIDTH
 )(
-    input  logic                          clk_i, rst_i,  // clock and async active-high reset
+    input  logic                          clk_i, rst_ni,  // clock and async active-high reset
     input  logic [(INDEX_WIDTH-1):0]      rd_index_i,    // Index to read out tag and target
     input  logic [(INDEX_WIDTH-1):0]      wr_index_i,    // Index to write to tag table and target table
     input  logic                          wren_i,        // Enable writing to tag table and target table
@@ -27,8 +27,8 @@ module agree_btb #(
     logic                          bias_table   [0:(TABLE_SIZE-1)];
 
     //Sync write:
-    always @(posedge clk_i or posedge rst_i) begin
-        if (rst_i) begin
+    always @(posedge clk_i or negedge rst_ni) begin
+        if (rst_ni) begin
             for (i=0; i<TABLE_SIZE; i=i+1) begin
                 valid_table [i] <= 0; 
                 //bias_table  [i] <= 0;

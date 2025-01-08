@@ -1,10 +1,25 @@
 module lsu (
-    input  logic        clk_i, rst_n_i, lsu_wren_i,
-    input  logic [2:0]  funct3_i,       
-    input  logic [31:0] st_data_i, io_sw_i, io_btn_i, lsu_addr_i,
-    output logic [31:0] ld_data_o, io_lcd_o, io_ledg_o, io_ledr_o,
-    output logic [6:0]  io_hex0_o, io_hex1_o, io_hex2_o, io_hex3_o,
-                        io_hex4_o, io_hex5_o, io_hex6_o, io_hex7_o
+    input  logic        clk_i, rst_ni, lsu_wren_i,
+    input  logic [2:0]  funct3_i,
+    input  logic [31:0] st_data_i, 
+                        lsu_addr_i,
+
+    input  logic [31:0] io_sw_i,
+    input  logic [3:0]  io_btn_i,       
+
+    output logic [31:0] ld_data_o,
+
+    output logic [31:0] io_lcd_o,
+                        io_ledg_o, 
+                        io_ledr_o,
+    output logic [6:0]  io_hex0_o, 
+                        io_hex1_o,
+                        io_hex2_o,
+                        io_hex3_o,
+                        io_hex4_o,
+                        io_hex5_o,
+                        io_hex6_o,
+                        io_hex7_o
 );
 
     logic [2:0]  cs;
@@ -84,8 +99,8 @@ module lsu (
 
     /////////////////////////////////////////
     // Load-Store for data_mem
-    always @(posedge clk_i or negedge rst_n_i) begin
-        if (!rst_n_i) begin
+    always @(posedge clk_i or negedge rst_ni) begin
+        if (!rst_ni) begin
             for (integer i = 0; i < 8192; i = i+1) data_mem[i] <= 8'h00;
         end else begin
             if (cs[0] & lsu_wren_i) begin
@@ -106,8 +121,8 @@ module lsu (
     
     /////////////////////////////////////////
     // Load-Store for output_mem
-    always @(posedge clk_i or negedge rst_n_i) begin
-        if (!rst_n_i) begin
+    always @(posedge clk_i or negedge rst_ni) begin
+        if (!rst_ni) begin
             for (integer i = 0; i < 64; i = i+1) output_mem[i] <= 8'h00;
         end else begin
             if (cs[1] & lsu_wren_i) begin
@@ -127,12 +142,12 @@ module lsu (
 
     ///////////////////////////////////////////
     // Load-Store for input_mem
-    always @(posedge clk_i or negedge rst_n_i) begin
-        if (!rst_n_i) begin
+    always @(posedge clk_i or negedge rst_ni) begin
+        if (!rst_ni) begin
             for (integer i = 0; i < 32; i = i+1) input_mem[i] <= 8'h00;
         end else begin
             {input_mem[5'b0_0000+5'h3], input_mem[5'b0_0000+5'h2], input_mem[5'b0_0000+5'h1], input_mem[5'b0_0000]} <= io_sw_i;
-            input_mem[5'b1_0000] <= io_btn_i[7:0];
+            input_mem[5'b1_0000] <= {4'b0000, io_btn_i};
         end
     end
     // Output of input_mem

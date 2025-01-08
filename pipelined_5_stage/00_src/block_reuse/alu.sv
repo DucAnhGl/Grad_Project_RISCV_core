@@ -4,11 +4,13 @@ module alu (
 
     output logic [31:0] alu_data_o
 );
-    logic [31:0] temp, temp_sll, temp_srl, temp_sra;
+    logic [31:0] temp, temp_sll, temp_srl, temp_sra, not_operand_b;
     logic [31:0] alu_temp;
     logic [0:0]  carry, overflow, signed_lt, unsigned_lt;
 
-    assign {carry,temp} = operand_a_i + ~operand_b_i + 32'h1;
+    assign not_operand_b = ~operand_b_i;
+
+    assign {carry,temp} = operand_a_i + not_operand_b + 32'h1;
     assign overflow     = (operand_a_i[31] ^ operand_b_i[31]) & (operand_a_i[31] ^ temp[31]);
     assign signed_lt    = temp[31] ^ overflow;
     assign unsigned_lt  = carry;
@@ -16,17 +18,17 @@ module alu (
     sll u1(
         .operand_a_i(operand_a_i),
         .operand_b_i(operand_b_i[4:0]),
-        .o_sll_data(temp_sll)
+        .sll_data_o (temp_sll)
     );
     srl u2(
         .operand_a_i(operand_a_i),
         .operand_b_i(operand_b_i[4:0]),
-        .o_srl_data(temp_srl)
+        .srl_data_o (temp_srl)
     );
     sra u3(
         .operand_a_i(operand_a_i),
         .operand_b_i(operand_b_i[4:0]),
-        .o_sra_data(temp_sra)
+        .sra_data_o(temp_sra)
     );
 
     always @(*) begin

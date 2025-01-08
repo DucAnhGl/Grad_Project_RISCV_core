@@ -6,7 +6,7 @@ which is in default the MEM stage.
 module always_taken_predictor #(
     INDEX_WIDTH
 ) (
-    input logic                          clk_i, rst_i,
+    input logic                          clk_i, rst_ni,
     input logic [(32-INDEX_WIDTH-2)-1:0] IF_PC_tag_i,              // Tag field of Fetch stage's PC
     input logic [(INDEX_WIDTH-1):0]      IF_btb_rd_index_i,        // Read index of btb
     input logic [(INDEX_WIDTH-1):0]      EXMEM_btb_wr_index_i,     // Write index of btb
@@ -36,7 +36,7 @@ module always_taken_predictor #(
         .INDEX_WIDTH(INDEX_WIDTH)
     ) u_btb (
         .clk_i       (clk_i),
-        .rst_i       (rst_i),
+        .rst_ni      (rst_ni),
         .rd_index_i  (IF_btb_rd_index_i),
         .wr_index_i  (EXMEM_btb_wr_index_i),
         .wren_i      (btb_wren),

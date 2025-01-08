@@ -7,7 +7,7 @@ module two_bit_predictor #(
     PHT_INDEX_WIDTH,
     BTB_INDEX_WIDTH
 ) (
-    input logic                              clk_i, rst_i,
+    input logic                              clk_i, rst_ni,
     input logic [(32-BTB_INDEX_WIDTH-2)-1:0] IF_PC_tag_i,              // Tag field of Fetch stage's PC
     input logic [(BTB_INDEX_WIDTH-1):0]      IF_btb_rd_index_i,        // Read index of btb
     input logic [(BTB_INDEX_WIDTH-1):0]      EXMEM_btb_wr_index_i,     // Write index of btb
@@ -47,7 +47,7 @@ module two_bit_predictor #(
         .INDEX_WIDTH(BTB_INDEX_WIDTH)
     ) u_btb (
         .clk_i       (clk_i),
-        .rst_i       (rst_i),
+        .rst_ni      (rst_ni),
         .rd_index_i  (IF_btb_rd_index_i),
         .wr_index_i  (EXMEM_btb_wr_index_i),
         .wren_i      (btb_wren),
@@ -63,7 +63,7 @@ module two_bit_predictor #(
         .INDEX_WIDTH(PHT_INDEX_WIDTH)
     ) pht_inst (
         .clk_i           (clk_i),
-        .rst_i           (rst_i),
+        .rst_ni          (rst_ni),
         .update_en_i     (pht_update_en),
         .update_index_i  (EXMEM_pht_wr_index_i),
         .br_taken_i      (EXMEM_br_decision_i),

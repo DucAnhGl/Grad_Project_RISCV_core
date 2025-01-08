@@ -1,7 +1,7 @@
 module pht #(
     INDEX_WIDTH
 )(
-    input  logic                     clk_i, rst_i,       // Clock and active-high reset
+    input  logic                     clk_i, rst_ni,       // Clock and active-high reset
     input  logic                     update_en_i,        // Decide whether to enable updating the table or not
     input  logic [(INDEX_WIDTH-1):0] update_index_i,     // The index of row that needs to be updated
     input  logic                     br_taken_i,         // The true branch decision, used to decide the updating of pht
@@ -20,8 +20,8 @@ module pht #(
 
     logic [1:0] pht_table [0:(TABLE_SIZE-1)];
 
-    always_ff @(posedge clk_i or posedge rst_i) begin
-        if (rst_i) begin
+    always_ff @(posedge clk_i or negedge rst_ni) begin
+        if (rst_ni) begin
             for (i=0; i<TABLE_SIZE; i=i+1) begin
                 pht_table[i] <= WEAKLY_NOT_TAKEN; //Initial state is strongly not taken
             end
