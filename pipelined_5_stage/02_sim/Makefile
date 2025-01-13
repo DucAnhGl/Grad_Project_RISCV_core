@@ -89,3 +89,5 @@ hex:
 	riscv32-unknown-elf-as -o asm_output/out.o ../../programs/test_program.asm
 	riscv32-unknown-elf-objcopy -O verilog asm_output/out.o instruction_mem.mem
 	riscv32-unknown-elf-objdump -d asm_output/out.o > asm_output/output.asm
+	@echo "00 00 00 00" >> instruction_mem.mem
+	

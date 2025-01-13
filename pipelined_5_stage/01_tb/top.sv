@@ -34,7 +34,7 @@ module top
     .io_lcd_o   () // Output for driving the LCD register
   );
 
-  assign br_misses = pipelined_always_taken_inst.IF_flush;
+   assign br_misses = (pipelined_always_taken_inst.IF_flush && pipelined_always_taken_inst.EXMEM_is_jmp);
   assign br_instr  = pipelined_always_taken_inst.EXMEM_is_jmp;
   assign instr     = pipelined_always_taken_inst.IF_instr;
 

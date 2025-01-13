@@ -9,13 +9,15 @@ loop:
 addi x5, x5, 1
 bne  x5, x6, loop
 
+li x10, 0x2100
+
 #Load after Store
-sw   x5, 0(x0)
-lw   x2, 0(x0)
+sw   x5, 0(x10)
+lw   x2, 0(x10)
 
 #Store after Load
-sw   x2, 4(x0)
-lw   x7, 4(x0)
+sw   x2, 4(x10)
+lw   x7, 4(x10)
 
 jal  x1, func
 add  x3, x1, x2
