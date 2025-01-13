@@ -5,6 +5,23 @@
 # Copyright (c) 2022 Hai Cao Xuan
 #*******************************************************************************
 
+PREDICTOR ?= 1
+ifeq ($(PREDICTOR), 1)
+    MACRO = ALWAYS_TAKEN
+    PREDICTOR_NAME = "Always Taken"
+else ifeq ($(PREDICTOR), 2)
+    MACRO = TWO_BIT
+    PREDICTOR_NAME = "Two bit"
+else ifeq ($(PREDICTOR), 3)
+    MACRO = GSHARE
+    PREDICTOR_NAME = "GShare"
+else ifeq ($(PREDICTOR), 4)
+    MACRO = AGREE
+    PREDICTOR_NAME = "Agree"
+else
+    $(error Invalid PREDICTOR: $(PREDICTOR). Choose from 1 (ALWAYSTAKEN), 2 (TWOBITS), 3 (GSHARE), 4 (AGREE))
+endif
+
 FILES := -f filelist #$(shell cat filelist)
 
 BUILD_PRESIQUITES=$(shell cat filelist | sed 's/-y//g' | sed 's/ //g')
@@ -36,6 +53,12 @@ VERILATOR_FLAGS += --assert
 # Make waveforms
 VERILATOR_FLAGS += --trace-fst
 VERILATOR_FLAGS += --build -j
+
+# Specify the top module file
+TOP ?= top.sv
+
+# Add predictor-specific macro
+VERILATOR_FLAGS += -D$(MACRO)
 
 # Input files for Verilator
 VERILATOR_INPUT = -f filelist ../01_tb/top.sv --top-module top
@@ -81,6 +104,7 @@ clean:
 .PHONY: all
 all: 
 	make clean
+	@echo "Using Predictor: $(PREDICTOR_NAME)"
 	make build
 	make sim
 

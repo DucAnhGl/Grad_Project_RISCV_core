@@ -3,5 +3,6 @@
 #../src/Pipelined_always_taken.v
 #../src/Pipelined_two_bit_predictor.v
 #../src/Pipelined_gshare_predictor.v
-../00_src/top_designs/pipelined_always_taken.sv
+#../00_src/top_designs/pipelined_always_taken.sv
+../00_src/top_designs/pipelined_two_bit.sv
 
