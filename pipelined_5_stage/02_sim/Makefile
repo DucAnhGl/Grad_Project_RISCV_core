@@ -84,10 +84,31 @@ all:
 	make build
 	make sim
 
+PROGRAM ?= 1
+
 .PHONY: hex
 hex:
-	riscv32-unknown-elf-as -o asm_output/out.o ../../programs/test_program.asm
-	riscv32-unknown-elf-objcopy -O verilog asm_output/out.o instruction_mem.mem
-	riscv32-unknown-elf-objdump -d asm_output/out.o > asm_output/output.asm
+ifeq ($(PROGRAM), 1)
+	@riscv32-unknown-elf-as -o asm_output/out.o ../../programs/1_agree_friendly.asm
+else ifeq ($(PROGRAM), 2)
+	@riscv32-unknown-elf-as -o asm_output/out.o ../../programs/2_bubble_sort.asm
+else ifeq ($(PROGRAM), 3)
+	@riscv32-unknown-elf-as -o asm_output/out.o ../../programs/3_ten_number_bubble_sort.asm
+else ifeq ($(PROGRAM), 4)
+	@riscv32-unknown-elf-as -o asm_output/out.o ../../programs/4_gshare_friendly.asm
+else ifeq ($(PROGRAM), 5)
+	@riscv32-unknown-elf-as -o asm_output/out.o ../../programs/5_Fibonacci.asm
+else ifeq ($(PROGRAM), 6)
+	@riscv32-unknown-elf-as -o asm_output/out.o ../../programs/6_delay_function.asm
+else ifeq ($(PROGRAM), 7)
+	@riscv32-unknown-elf-as -o asm_output/out.o ../../programs/7_test_program.asm
+else
+	$(error Invalid PROGRAM: $(PROGRAM). Choose from 1 to 7)
+endif
+	@riscv32-unknown-elf-objcopy -O verilog asm_output/out.o instruction_mem.mem
+	@riscv32-unknown-elf-objdump -d asm_output/out.o > asm_output/output.asm
 	@echo "00 00 00 00" >> instruction_mem.mem
-	
+	@echo "Generated hex for Program: $(PROGRAM)"
+
+
+
