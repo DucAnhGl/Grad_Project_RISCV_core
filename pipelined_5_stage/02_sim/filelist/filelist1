@@ -1,0 +1,6 @@
+-y ../00_src/block_reuse
+-y ../00_src/branch
+
+../00_src/top_designs/pipelined_always_taken.sv
+
+
