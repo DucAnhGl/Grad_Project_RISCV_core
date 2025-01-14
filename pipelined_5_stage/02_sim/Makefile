@@ -5,7 +5,29 @@
 # Copyright (c) 2022 Hai Cao Xuan
 #*******************************************************************************
 
-FILES := -f filelist #$(shell cat filelist)
+PREDICTOR ?= 1
+
+ifeq ($(PREDICTOR), 1)
+    MACRO = ALWAYS_TAKEN
+    PREDICTOR_NAME = "Always Taken"
+    FILELIST = filelist/filelist1
+else ifeq ($(PREDICTOR), 2)
+    MACRO = TWO_BIT
+    PREDICTOR_NAME = "Two Bit"
+    FILELIST = filelist/filelist2
+else ifeq ($(PREDICTOR), 3)
+    MACRO = GSHARE
+    PREDICTOR_NAME = "GShare"
+    FILELIST = filelist/filelist3
+else ifeq ($(PREDICTOR), 4)
+    MACRO = AGREE
+    PREDICTOR_NAME = "Agree"
+    FILELIST = filelist/filelist4
+else
+    $(error Invalid PREDICTOR: $(PREDICTOR). Choose from 1 (ALWAYS_TAKEN), 2 (TWO_BIT), 3 (GSHARE), 4 (AGREE))
+endif
+
+# FILES := -f $(FILELIST) #$(shell cat filelist)
 
 BUILD_PRESIQUITES=$(shell cat filelist | sed 's/-y//g' | sed 's/ //g')
 
@@ -37,8 +59,14 @@ VERILATOR_FLAGS += --assert
 VERILATOR_FLAGS += --trace-fst
 VERILATOR_FLAGS += --build -j
 
+# Specify the top module file
+TOP ?= top.sv
+
+# Add predictor-specific macro
+VERILATOR_FLAGS += -D$(MACRO)
+
 # Input files for Verilator
-VERILATOR_INPUT = -f filelist ../01_tb/top.sv --top-module top
+VERILATOR_INPUT = -f $(FILELIST) ../01_tb/top.sv --top-module top
 
 .PHONY: help
 help:
@@ -54,7 +82,7 @@ help:
 lint:
 	@echo
 	@echo "<>---------------- LINT CHECK ----------------"
-	@$(VERILATOR) $(LINT_FLAGS) $(FILES)
+	@$(VERILATOR) $(LINT_FLAGS) $(FILELIST)
 
 .PHONY: build
 build: #instruction_mem.mem #./obj_dir/Vtop 
@@ -81,11 +109,35 @@ clean:
 .PHONY: all
 all: 
 	make clean
+	@echo "Using Predictor: $(PREDICTOR_NAME)"
 	make build
 	make sim
 
+PROGRAM ?= 1
+
 .PHONY: hex
 hex:
-	riscv32-unknown-elf-as -o asm_output/out.o ../../programs/test_program.asm
-	riscv32-unknown-elf-objcopy -O verilog asm_output/out.o instruction_mem.mem
-	riscv32-unknown-elf-objdump -d asm_output/out.o > asm_output/output.asm
+ifeq ($(PROGRAM), 1)
+	@riscv32-unknown-elf-as -o asm_output/out.o ../../programs/1_agree_friendly.asm
+else ifeq ($(PROGRAM), 2)
+	@riscv32-unknown-elf-as -o asm_output/out.o ../../programs/2_bubble_sort.asm
+else ifeq ($(PROGRAM), 3)
+	@riscv32-unknown-elf-as -o asm_output/out.o ../../programs/3_ten_number_bubble_sort.asm
+else ifeq ($(PROGRAM), 4)
+	@riscv32-unknown-elf-as -o asm_output/out.o ../../programs/4_gshare_friendly.asm
+else ifeq ($(PROGRAM), 5)
+	@riscv32-unknown-elf-as -o asm_output/out.o ../../programs/5_fibonacci.asm
+else ifeq ($(PROGRAM), 6)
+	@riscv32-unknown-elf-as -o asm_output/out.o ../../programs/6_delay_function.asm
+else ifeq ($(PROGRAM), 7)
+	@riscv32-unknown-elf-as -o asm_output/out.o ../../programs/7_test_program.asm
+else
+	$(error Invalid PROGRAM: $(PROGRAM). Choose from 1 to 7)
+endif
+	@riscv32-unknown-elf-objcopy -O verilog asm_output/out.o instruction_mem.mem
+	@riscv32-unknown-elf-objdump -d asm_output/out.o > asm_output/output.asm
+	@echo "00 00 00 00" >> instruction_mem.mem
+	@echo "Generated hex for Program: $(PROGRAM)"
+
+
+

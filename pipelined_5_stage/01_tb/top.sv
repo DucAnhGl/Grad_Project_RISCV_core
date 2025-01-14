@@ -11,7 +11,7 @@ module top
 
 
 );
-
+`ifdef ALWAYS_TAKEN
   pipelined_always_taken pipelined_always_taken_inst (
     .clk_i  (clk_i),
     .rst_ni (rst_ni),
@@ -34,36 +34,59 @@ module top
     .io_lcd_o   () // Output for driving the LCD register
   );
 
-  assign br_misses = pipelined_always_taken_inst.IF_flush;
+  assign br_misses = (pipelined_always_taken_inst.IF_flush && pipelined_always_taken_inst.EXMEM_is_jmp);
   assign br_instr  = pipelined_always_taken_inst.EXMEM_is_jmp;
   assign instr     = pipelined_always_taken_inst.IF_instr;
+`endif // ALWAYS_TAKEN
 
+`ifdef TWO_BIT
+  pipelined_two_bit pipelined_two_bit_inst (
+    .clk_i  (clk_i),
+    .rst_ni (rst_ni),
+    
+    .io_sw_i    (),  // Input for switches
+    .io_btn_i   (),  // Input for buttons
 
-  // Pipelined_two_bit_predictor Pipelined_two_bit_predictor_inst (
-  //   .clk_i (clk_i),
-  //   .rst_i (rst_i)
-  // );
+    .pc_debug_o (),  // Debug program counter
+    .insn_vld_o (),  // Instruction valid
+    .io_ledr_o  (),  // Output for driving red LEDs
+    .io_ledg_o  (),  // Output for driving green LEDs
+    .io_hex0_o  (),  // Output for driving 7-segment LED display
+    .io_hex1_o  (),  // Output for driving 7-segment LED display
+    .io_hex2_o  (),  // Output for driving 7-segment LED display
+    .io_hex3_o  (),  // Output for driving 7-segment LED display
+    .io_hex4_o  (),  // Output for driving 7-segment LED display
+    .io_hex5_o  (),  // Output for driving 7-segment LED display
+    .io_hex6_o  (),  // Output for driving 7-segment LED display
+    .io_hex7_o  (),  // Output for driving 7-segment LED display
+    .io_lcd_o   () // Output for driving the LCD register
+  );
 
-  // assign br_misses = Pipelined_two_bit_predictor_inst.IF_flush;
-  // assign br_instr  = Pipelined_two_bit_predictor_inst.EXMEM_is_jmp;
-  // assign instr     = Pipelined_two_bit_predictor_inst.IF_instr;
+  assign br_misses = (pipelined_two_bit_inst.IF_flush && pipelined_two_bit_inst.EXMEM_is_jmp);
+  assign br_instr  = pipelined_two_bit_inst.EXMEM_is_jmp;
+  assign instr     = pipelined_two_bit_inst.IF_instr;
+`endif // TWO_BIT
 
-  // Pipelined_gshare_predictor Pipelined_gshare_predictor_inst (
-  //   .clk_i (clk_i),
-  //   .rst_i (rst_i)
-  // );
+`ifdef GSHARE
+  Pipelined_gshare_predictor Pipelined_gshare_predictor_inst (
+    .clk_i (clk_i),
+    .rst_i (rst_i)
+  );
 
-  // assign br_misses = Pipelined_gshare_predictor_inst.IF_flush;
-  // assign br_instr  = Pipelined_gshare_predictor_inst.EXMEM_is_jmp;
-  // assign instr     = Pipelined_gshare_predictor_inst.IF_instr;
+  assign br_misses = Pipelined_gshare_predictor_inst.IF_flush;
+  assign br_instr  = Pipelined_gshare_predictor_inst.EXMEM_is_jmp;
+  assign instr     = Pipelined_gshare_predictor_inst.IF_instr;
+`endif
 
-  // Pipelined_agree_predictor Pipelined_agree_predictor_inst (
-  //   .clk_i (clk_i),
-  //   .rst_i (rst_i)
-  // );
+`ifdef AGREE
+  Pipelined_agree_predictor Pipelined_agree_predictor_inst (
+    .clk_i (clk_i),
+    .rst_i (rst_i)
+  );
 
-  // assign br_misses = Pipelined_agree_predictor_inst.IF_flush;
-  // assign br_instr  = Pipelined_agree_predictor_inst.EXMEM_is_jmp;
-  // assign instr     = Pipelined_agree_predictor_inst.IF_instr;
+  assign br_misses = Pipelined_agree_predictor_inst.IF_flush;
+  assign br_instr  = Pipelined_agree_predictor_inst.EXMEM_is_jmp;
+  assign instr     = Pipelined_agree_predictor_inst.IF_instr;
+`endif 
 
 endmodule : top
