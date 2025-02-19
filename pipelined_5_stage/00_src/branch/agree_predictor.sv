@@ -24,18 +24,16 @@ module agree_predictor #(
     input  logic                          EXMEM_is_jmp_i,           // Whether the instruction is a conditional branch
   //input  logic [1:0]                    EXMEM_is_uncbr_i,        // Whether the instruction is an unconditional branch
     input  logic                          EXMEM_prediction_i,      // Prediction the predictor has made for this branch back at Fetch 
-    input  logic                          EXMEM_bias_i,           // Prediction the predictor has made for this branch back at Fetch
+    input  logic                          EXMEM_bias_i,           
     input  logic [(HISTORY_WIDTH-1):0]    EXMEM_ghr_data_i, 
 
-    input  logic                          EXMEM_btb_valid_i,
     
     output logic                          IF_btb_hit_o,            // Whether the instruction in the Fetch stage "hit"
     output logic                          IF_prediction_o,         // The prediction the predictor make
     output logic [1:0]                    IF_PCnext_sel_o,         // Selection for the PCnext MUX:
                                                                    // 2'b00: IF_PCplus4;    2'b01: EXMEM_PCplus4, 
                                                                    // 2'b10: IF_btb_target; 2'b11: EXMEM_br_target
-    output logic                          IF_bias_o,              // Whether the instruction in the Fetch stage "hit"
-    output logic                          IF_btb_valid_o,
+    output logic                          IF_bias_o,              // Bias bit assigned to branch in btb
     output logic [31:0]                   IF_btb_rd_target_o,      // Target read from btb in Fetch stage
     output logic                          IF_flush_o,               // Flush signal for penalty when prediction is wrong
     output logic [(HISTORY_WIDTH-1):0]    IF_ghr_data_o 
@@ -43,6 +41,7 @@ module agree_predictor #(
 
 
     logic btb_wren;
+    logic btb_valid;
     logic pht_update_en;
     logic ghr_update_en;
     logic agree_update_en;
@@ -51,10 +50,9 @@ module agree_predictor #(
 
 
     assign btb_wren          = (!EXMEM_btb_hit_i) && (EXMEM_is_jmp_i); // btb update condition: If the instruction was a branch and it was a miss
-    assign pht_update_en     = (EXMEM_is_jmp_i /*8 EXMEM_btb_hit_i*/);                       // pht update condition: If the instruction was a branch or JAL
+    assign pht_update_en     = (EXMEM_is_jmp_i /* EXMEM_btb_hit_i*/);                       // pht update condition: If the instruction was a branch or JAL
     assign ghr_update_en     = (EXMEM_is_jmp_i);                       // ghr update condition: If the instruction was a branch or JAL
-    assign agree_update_en   = (!EXMEM_btb_hit_i) && (EXMEM_is_jmp_i); // ghr update condition: If the instruction was a branch or JAL
-    assign IF_btb_hit_o      = ((IF_PC_tag_i == IF_btb_rd_tag) & (IF_btb_valid_o));
+    assign IF_btb_hit_o      = ((IF_PC_tag_i == IF_btb_rd_tag) & (btb_valid));
     assign IF_prediction_o   = IF_btb_hit_o & (pht_predictor_bit ~^ IF_bias_o);
     //assign IF_prediction_o   = (IF_valid_agree) ? (IF_btb_hit_o & pht_predictor_bit) ~^ IF_bias_o : 0;
 
@@ -70,7 +68,7 @@ module agree_predictor #(
         .wr_tag_i    (EXMEM_btb_wr_tag_i),
         .br_taken_i  (EXMEM_br_decision_i),
 
-        .valid_o     (IF_btb_valid_o),
+        .valid_o     (btb_valid),
         .rd_target_o (IF_btb_rd_target_o),
         .rd_tag_o    (IF_btb_rd_tag),
         .bias_o      (IF_bias_o)
