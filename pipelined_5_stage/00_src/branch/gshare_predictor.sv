@@ -82,7 +82,7 @@ module gshare_predictor #(
         .HISTORY_WIDTH(HISTORY_WIDTH)  
     ) ghr_inst (
         .clk_i       (clk_i),          
-        .rst_ni       (rst_ni),          
+        .rst_ni      (rst_ni),          
         .update_en_i (ghr_update_en),  
         .br_taken_i  (EXMEM_br_decision_i),    
         .ghr_data_o  (IF_ghr_data_o)     

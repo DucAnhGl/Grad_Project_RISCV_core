@@ -1,6 +1,6 @@
 -y ../00_src/block_reuse
 -y ../00_src/branch
 
-../src/Pipelined_gshare_predictor.v
+../00_src/top_designs/pipelined_gshare.sv
 
 

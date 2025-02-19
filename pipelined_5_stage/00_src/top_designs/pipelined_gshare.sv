@@ -20,12 +20,14 @@ module pipelined_gshare (
 ); 
 
 localparam INDEX_WIDTH = 12;
+localparam HISTORY_WIDTH = 5;
 
 /*==============================   IF SIGNALS   ==============================*/
     logic [31:0] IF_pc, IF_pcplus4, IF_instr, IF_pcnext, IF_btb_rd_target;
     logic        IF_btb_hit, IF_flush, IF_prediction;
     logic [1:0]  IF_PCnext_sel;
 
+    logic [(HISTORY_WIDTH-1):0] IF_ghr_data;
 /*==============================   ID SIGNALS   ==============================*/
     /* Control signal */
     logic ID_insn_vld, ID_is_br, ID_rd_wren, ID_opa_sel, ID_mem_wren, ID_mem_rden, ID_wb_sel;
@@ -40,6 +42,7 @@ localparam INDEX_WIDTH = 12;
     logic [6:0]  IFID_funct7;
 
     logic        IFID_btb_hit, IFID_prediction;
+    logic [(HISTORY_WIDTH-1):0] IFID_ghr_data;
 
 /*==============================   EX SIGNALS   ==============================*/
     /* Control signal */
@@ -58,6 +61,8 @@ localparam INDEX_WIDTH = 12;
     logic [31:0] EX_alu_opa, EX_alu_opb, EX_br_base, EX_fwd_rs1_data, EX_fwd_rs2_data; 
     logic [3:0]  EX_alu_op;
     
+    logic [(HISTORY_WIDTH-1):0] IDEX_ghr_data;
+
 /*==============================   MEM SIGNALS   ==============================*/
     /* Control signal */
     logic EXMEM_insn_vld, EXMEM_is_br, EXMEM_rd_wren, EXMEM_mem_wren, /*EXMEM_mem_rden,*/ EXMEM_wb_sel;
@@ -70,6 +75,8 @@ localparam INDEX_WIDTH = 12;
     logic [4:0]  EXMEM_rd;
     logic [31:0] MEM_lsu_rdata;
     logic        EXMEM_is_jmp;
+
+    logic [(HISTORY_WIDTH-1):0] EXMEM_ghr_data;
 
 /*==============================   WB SIGNALS   ==============================*/
     /* Control signal */
@@ -101,9 +108,9 @@ localparam INDEX_WIDTH = 12;
     );
 
     // Branch predictor
-    two_bit_predictor #(
-        .PHT_INDEX_WIDTH (INDEX_WIDTH),
-        .BTB_INDEX_WIDTH (INDEX_WIDTH)
+    gshare_predictor #(
+        .INDEX_WIDTH   (INDEX_WIDTH),
+        .HISTORY_WIDTH (HISTORY_WIDTH)
     ) inst_predictor (
         .clk_i                 (clk_i),                            
         .rst_ni                (rst_ni),                          
@@ -112,21 +119,22 @@ localparam INDEX_WIDTH = 12;
         .EXMEM_btb_wr_index_i  (EXMEM_pc[(INDEX_WIDTH+1):2]),             
         .EXMEM_btb_wr_tag_i    (EXMEM_pc[31:(INDEX_WIDTH+2)]),
 
-        .EXMEM_pht_wr_index_i  (EXMEM_pc[INDEX_WIDTH+1:2]),
-        .IF_pht_rd_index_i     (IF_pc[INDEX_WIDTH+1:2]),
+        .EXMEM_pht_wr_index_i  (EXMEM_pc[HISTORY_WIDTH+1:2]),
+        .IF_pht_rd_index_i     (IF_pc[HISTORY_WIDTH+1:2]),
 
         .EXMEM_btb_wr_target_i (EXMEM_br_addr),            
         .EXMEM_btb_hit_i       (EXMEM_btb_hit),                  
         .EXMEM_prediction_i    (EXMEM_prediction),
         .EXMEM_br_decision_i   (EXMEM_true_br_decision),              
         .EXMEM_is_jmp_i        (EXMEM_is_br || (EXMEM_is_uncbr==2'b10)),
-        // .EXMEM_is_br_i         (EXMEM_is_br),
-        // .EXMEM_is_uncbr_i      (EXMEM_is_uncbr),                  
+        .EXMEM_ghr_data_i      (EXMEM_ghr_data),
+
         .IF_btb_hit_o          (IF_btb_hit),    
         .IF_prediction_o       (IF_prediction),                 
         .IF_PCnext_sel_o       (IF_PCnext_sel),                  
         .IF_btb_rd_target_o    (IF_btb_rd_target),               
-        .IF_flush_o            (IF_flush)                        
+        .IF_flush_o            (IF_flush),
+        .IF_ghr_data_o         (IF_ghr_data)         
     );
 
 
@@ -155,6 +163,7 @@ localparam INDEX_WIDTH = 12;
             IFID_instr   <= 32'h0000_0000;
             IFID_btb_hit <= 1'b0;
             IFID_prediction <= 1'b0;
+            IFID_ghr_data   <= 0;
         end
         else begin
             if (IFIDreg_clr) begin
@@ -163,6 +172,7 @@ localparam INDEX_WIDTH = 12;
                 IFID_instr   <= 32'h0000_0000;
                 IFID_btb_hit <= 1'b0;
                 IFID_prediction <= 1'b0;
+                IFID_ghr_data   <= 0;
             end else begin
                 if (IFIDreg_wren) begin
                     IFID_pc      <= IF_pc;
@@ -170,6 +180,7 @@ localparam INDEX_WIDTH = 12;
                     IFID_instr   <= IF_instr;
                     IFID_btb_hit <= IF_btb_hit;
                     IFID_prediction <= IF_prediction;
+                    IFID_ghr_data   <= IF_ghr_data;
                 end
             end       
         end        
@@ -246,6 +257,7 @@ always @(posedge clk_i or negedge rst_ni) begin
             IDEX_rs2      <= 5'b0;
             IDEX_btb_hit  <= 1'b0;
             IDEX_prediction <= 1'b0;
+            IDEX_ghr_data   <= 0;
         end
         else begin
             if (IDEXreg_clr) begin
@@ -274,6 +286,7 @@ always @(posedge clk_i or negedge rst_ni) begin
                 IDEX_rs2      <= 5'b0;
                 IDEX_btb_hit  <= 1'b0;
                 IDEX_prediction <= 1'b0; 
+                IDEX_ghr_data   <= 0;
             end
             else begin
                 //Control signals
@@ -301,6 +314,7 @@ always @(posedge clk_i or negedge rst_ni) begin
                 IDEX_rs2      <= IFID_rs2;
                 IDEX_btb_hit  <= IFID_btb_hit;
                 IDEX_prediction <= IFID_prediction; 
+                IDEX_ghr_data   <= IFID_ghr_data;
                 
             end
         end        
@@ -366,6 +380,7 @@ always @(posedge clk_i or negedge rst_ni) begin
             EXMEM_pc               <= 32'h0000_0000;
             EXMEM_pcplus4          <= 32'h0000_0000;
             EXMEM_prediction       <= 1'b0; 
+            EXMEM_ghr_data         <= 0;
         end
         else begin
             if (EXMEMreg_clr) begin
@@ -389,6 +404,7 @@ always @(posedge clk_i or negedge rst_ni) begin
                 EXMEM_pc               <= 32'h0000_0000;
                 EXMEM_pcplus4          <= 32'h0000_0000;
                 EXMEM_prediction       <= 1'b0;
+                EXMEM_ghr_data         <= 0;
             end
             else begin
                 //Control signals
@@ -411,6 +427,7 @@ always @(posedge clk_i or negedge rst_ni) begin
                 EXMEM_pc               <= IDEX_pc;
                 EXMEM_pcplus4          <= IDEX_pcplus4;
                 EXMEM_prediction       <= IDEX_prediction;
+                EXMEM_ghr_data         <= IDEX_ghr_data;
             end
         end        
 end
