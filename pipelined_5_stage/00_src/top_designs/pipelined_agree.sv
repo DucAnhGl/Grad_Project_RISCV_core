@@ -443,7 +443,7 @@ always @(posedge clk_i or negedge rst_ni) begin
                 EXMEM_pcplus4          <= IDEX_pcplus4;
                 EXMEM_prediction       <= IDEX_prediction;
                 EXMEM_ghr_data         <= IDEX_ghr_data;
-                EXMEM_btb_bias         <= EXMEM_btb_bias;
+                EXMEM_btb_bias         <= IDEX_btb_bias;
             end
         end        
 end
