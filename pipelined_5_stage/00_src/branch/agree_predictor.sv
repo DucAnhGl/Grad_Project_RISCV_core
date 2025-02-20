@@ -21,8 +21,7 @@ module agree_predictor #(
 
     input  logic                          EXMEM_btb_hit_i,         // Whether there was a hit in the btb 
     input  logic                          EXMEM_br_decision_i,     // Branch decision in the branch commit stage
-    input  logic                          EXMEM_is_jmp_i,           // Whether the instruction is a conditional branch
-  //input  logic [1:0]                    EXMEM_is_uncbr_i,        // Whether the instruction is an unconditional branch
+    input  logic                          EXMEM_is_jmp_i,          // 
     input  logic                          EXMEM_prediction_i,      // Prediction the predictor has made for this branch back at Fetch 
     input  logic                          EXMEM_bias_i,           
     input  logic [(HISTORY_WIDTH-1):0]    EXMEM_ghr_data_i, 
@@ -33,9 +32,9 @@ module agree_predictor #(
     output logic [1:0]                    IF_PCnext_sel_o,         // Selection for the PCnext MUX:
                                                                    // 2'b00: IF_PCplus4;    2'b01: EXMEM_PCplus4, 
                                                                    // 2'b10: IF_btb_target; 2'b11: EXMEM_br_target
-    output logic                          IF_bias_o,              // Bias bit assigned to branch in btb
+    output logic                          IF_bias_o,               // Bias bit assigned to branch in btb
     output logic [31:0]                   IF_btb_rd_target_o,      // Target read from btb in Fetch stage
-    output logic                          IF_flush_o,               // Flush signal for penalty when prediction is wrong
+    output logic                          IF_flush_o,              // Flush signal for penalty when prediction is wrong
     output logic [(HISTORY_WIDTH-1):0]    IF_ghr_data_o 
 );
 
@@ -78,7 +77,7 @@ module agree_predictor #(
         .INDEX_WIDTH(HISTORY_WIDTH)
     ) pht_inst (
         .clk_i           (clk_i),
-        .rst_ni           (rst_ni),
+        .rst_ni          (rst_ni),
         .update_en_i     (pht_update_en),
         .update_index_i  (EXMEM_pht_wr_index_i ^ EXMEM_ghr_data_i),
         .br_taken_i      (EXMEM_br_decision_i ~^ EXMEM_bias_i),

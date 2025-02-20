@@ -131,6 +131,8 @@ else ifeq ($(PROGRAM), 6)
 	@riscv32-unknown-elf-as -o asm_output/out.o ../../programs/6_delay_function.asm
 else ifeq ($(PROGRAM), 7)
 	@riscv32-unknown-elf-as -o asm_output/out.o ../../programs/7_test_program.asm
+else ifeq ($(PROGRAM), 8)
+	@riscv32-unknown-elf-as -o asm_output/out.o ../../programs/8_complex_branch.asm
 else
 	$(error Invalid PROGRAM: $(PROGRAM). Choose from 1 to 7)
 endif
