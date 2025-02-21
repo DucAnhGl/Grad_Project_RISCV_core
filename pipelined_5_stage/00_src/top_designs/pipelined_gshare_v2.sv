@@ -1,4 +1,4 @@
-module pipelined_gshare (
+module pipelined_gshare_v2 (
     input  logic        clk_i,      // Global clock, active on the rising edge
     input  logic        rst_ni,     // Global low active reset
     input  logic [31:0] io_sw_i,    // Input for switches
@@ -108,7 +108,7 @@ localparam HISTORY_WIDTH = 5;
     );
 
     // Branch predictor
-    gshare_predictor #(
+    gshare_predictor_v2 #(
         .INDEX_WIDTH   (INDEX_WIDTH),
         .HISTORY_WIDTH (HISTORY_WIDTH)
     ) inst_predictor (

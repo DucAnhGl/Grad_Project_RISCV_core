@@ -3,7 +3,7 @@ Signals with "EXMEM" prefix indicates that they come from the branch commit stag
 which is in default the MEM stage.
 */
 
-module gshare_predictor #(
+module gshare_predictor_v2 #(
     INDEX_WIDTH, 
     HISTORY_WIDTH
 ) (
@@ -78,7 +78,7 @@ module gshare_predictor #(
         .br_prediction_o (pht_predictor_bit)
     );
 
-    ghr #(
+    ghr_v2 #(
         .HISTORY_WIDTH(HISTORY_WIDTH)  
     ) ghr_inst (
         .clk_i       (clk_i),          
@@ -86,7 +86,7 @@ module gshare_predictor #(
         .update_en_i (IF_btb_hit_o),  
         .br_taken_i  (IF_prediction_o),    
         .ghr_data_o  (IF_ghr_data_o),
-        .set_data    ({[(HISTORY_WIDTH-1):1],!EXMEM_ghr_data_i[0]})
+        .set_data    ({EXMEM_ghr_data_i[(HISTORY_WIDTH-1):1],!EXMEM_ghr_data_i[0]}),
         .set_en      (EXMEM_is_jmp_i & (EXMEM_prediction_i ^ EXMEM_br_decision_i))
     );
 

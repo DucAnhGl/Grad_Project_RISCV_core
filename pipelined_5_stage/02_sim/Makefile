@@ -23,6 +23,10 @@ else ifeq ($(PREDICTOR), 4)
     MACRO = AGREE
     PREDICTOR_NAME = "Agree"
     FILELIST = filelist/filelist4
+else ifeq ($(PREDICTOR), 5)
+    MACRO = GSHAREv2
+    PREDICTOR_NAME = "GSHAREv2"
+    FILELIST = filelist/filelist5
 else
     $(error Invalid PREDICTOR: $(PREDICTOR). Choose from 1 (ALWAYS_TAKEN), 2 (TWO_BIT), 3 (GSHARE), 4 (AGREE))
 endif
