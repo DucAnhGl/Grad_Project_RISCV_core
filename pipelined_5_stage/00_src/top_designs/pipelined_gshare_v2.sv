@@ -1,4 +1,4 @@
-module pipelined_agree (
+module pipelined_gshare (
     input  logic        clk_i,      // Global clock, active on the rising edge
     input  logic        rst_ni,     // Global low active reset
     input  logic [31:0] io_sw_i,    // Input for switches
@@ -20,7 +20,7 @@ module pipelined_agree (
 ); 
 
 localparam INDEX_WIDTH = 12;
-localparam HISTORY_WIDTH = 6;
+localparam HISTORY_WIDTH = 5;
 
 /*==============================   IF SIGNALS   ==============================*/
     logic [31:0] IF_pc, IF_pcplus4, IF_instr, IF_pcnext, IF_btb_rd_target;
@@ -28,7 +28,6 @@ localparam HISTORY_WIDTH = 6;
     logic [1:0]  IF_PCnext_sel;
 
     logic [(HISTORY_WIDTH-1):0] IF_ghr_data;
-    logic                       IF_btb_bias;
 /*==============================   ID SIGNALS   ==============================*/
     /* Control signal */
     logic ID_insn_vld, ID_is_br, ID_rd_wren, ID_opa_sel, ID_mem_wren, ID_mem_rden, ID_wb_sel;
@@ -44,7 +43,6 @@ localparam HISTORY_WIDTH = 6;
 
     logic        IFID_btb_hit, IFID_prediction;
     logic [(HISTORY_WIDTH-1):0] IFID_ghr_data;
-    logic                       IFID_btb_bias;
 
 /*==============================   EX SIGNALS   ==============================*/
     /* Control signal */
@@ -64,7 +62,6 @@ localparam HISTORY_WIDTH = 6;
     logic [3:0]  EX_alu_op;
     
     logic [(HISTORY_WIDTH-1):0] IDEX_ghr_data;
-    logic                       IDEX_btb_bias;
 
 /*==============================   MEM SIGNALS   ==============================*/
     /* Control signal */
@@ -80,7 +77,6 @@ localparam HISTORY_WIDTH = 6;
     logic        EXMEM_is_jmp;
 
     logic [(HISTORY_WIDTH-1):0] EXMEM_ghr_data;
-    logic                       EXMEM_btb_bias;
 
 /*==============================   WB SIGNALS   ==============================*/
     /* Control signal */
@@ -112,7 +108,7 @@ localparam HISTORY_WIDTH = 6;
     );
 
     // Branch predictor
-    agree_predictor #(
+    gshare_predictor #(
         .INDEX_WIDTH   (INDEX_WIDTH),
         .HISTORY_WIDTH (HISTORY_WIDTH)
     ) inst_predictor (
@@ -132,15 +128,13 @@ localparam HISTORY_WIDTH = 6;
         .EXMEM_br_decision_i   (EXMEM_true_br_decision),              
         .EXMEM_is_jmp_i        (EXMEM_is_br || (EXMEM_is_uncbr==2'b10)),
         .EXMEM_ghr_data_i      (EXMEM_ghr_data),
-        .EXMEM_bias_i          (EXMEM_btb_bias),
 
         .IF_btb_hit_o          (IF_btb_hit),    
         .IF_prediction_o       (IF_prediction),                 
         .IF_PCnext_sel_o       (IF_PCnext_sel),                  
         .IF_btb_rd_target_o    (IF_btb_rd_target),               
         .IF_flush_o            (IF_flush),
-        .IF_ghr_data_o         (IF_ghr_data),
-        .IF_bias_o             (IF_btb_bias)         
+        .IF_ghr_data_o         (IF_ghr_data)         
     );
 
 
@@ -169,9 +163,7 @@ localparam HISTORY_WIDTH = 6;
             IFID_instr   <= 32'h0000_0000;
             IFID_btb_hit <= 1'b0;
             IFID_prediction <= 1'b0;
-            IFID_ghr_data   <= '0;
-            IFID_btb_bias   <= 1'b0;
-
+            IFID_ghr_data   <= 0;
         end
         else begin
             if (IFIDreg_clr) begin
@@ -180,8 +172,7 @@ localparam HISTORY_WIDTH = 6;
                 IFID_instr   <= 32'h0000_0000;
                 IFID_btb_hit <= 1'b0;
                 IFID_prediction <= 1'b0;
-                IFID_ghr_data   <= '0;
-                IFID_btb_bias   <= 1'b0;
+                IFID_ghr_data   <= 0;
             end else begin
                 if (IFIDreg_wren) begin
                     IFID_pc      <= IF_pc;
@@ -190,7 +181,6 @@ localparam HISTORY_WIDTH = 6;
                     IFID_btb_hit <= IF_btb_hit;
                     IFID_prediction <= IF_prediction;
                     IFID_ghr_data   <= IF_ghr_data;
-                    IFID_btb_bias   <= IF_btb_bias;
                 end
             end       
         end        
@@ -268,7 +258,6 @@ always @(posedge clk_i or negedge rst_ni) begin
             IDEX_btb_hit  <= 1'b0;
             IDEX_prediction <= 1'b0;
             IDEX_ghr_data   <= 0;
-            IDEX_btb_bias   <= 1'b0;
         end
         else begin
             if (IDEXreg_clr) begin
@@ -298,7 +287,6 @@ always @(posedge clk_i or negedge rst_ni) begin
                 IDEX_btb_hit  <= 1'b0;
                 IDEX_prediction <= 1'b0; 
                 IDEX_ghr_data   <= 0;
-                IDEX_btb_bias   <= 1'b0;
             end
             else begin
                 //Control signals
@@ -327,7 +315,6 @@ always @(posedge clk_i or negedge rst_ni) begin
                 IDEX_btb_hit  <= IFID_btb_hit;
                 IDEX_prediction <= IFID_prediction; 
                 IDEX_ghr_data   <= IFID_ghr_data;
-                IDEX_btb_bias   <= IFID_btb_bias;
                 
             end
         end        
@@ -394,7 +381,6 @@ always @(posedge clk_i or negedge rst_ni) begin
             EXMEM_pcplus4          <= 32'h0000_0000;
             EXMEM_prediction       <= 1'b0; 
             EXMEM_ghr_data         <= 0;
-            EXMEM_btb_bias         <= 1'b0;
         end
         else begin
             if (EXMEMreg_clr) begin
@@ -419,7 +405,6 @@ always @(posedge clk_i or negedge rst_ni) begin
                 EXMEM_pcplus4          <= 32'h0000_0000;
                 EXMEM_prediction       <= 1'b0;
                 EXMEM_ghr_data         <= 0;
-                EXMEM_btb_bias         <= 1'b0;
             end
             else begin
                 //Control signals
@@ -443,7 +428,6 @@ always @(posedge clk_i or negedge rst_ni) begin
                 EXMEM_pcplus4          <= IDEX_pcplus4;
                 EXMEM_prediction       <= IDEX_prediction;
                 EXMEM_ghr_data         <= IDEX_ghr_data;
-                EXMEM_btb_bias         <= IDEX_btb_bias;
             end
         end        
 end
