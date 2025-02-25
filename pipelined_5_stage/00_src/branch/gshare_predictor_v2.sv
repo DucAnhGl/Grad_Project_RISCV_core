@@ -83,7 +83,7 @@ module gshare_predictor_v2 #(
     ) ghr_inst (
         .clk_i       (clk_i),          
         .rst_ni      (rst_ni),          
-        .update_en_i (ghr_update_en),  
+        .update_en_i (IF_btb_hit_o),  
         .br_taken_i  (IF_prediction_o),    
         .ghr_data_o  (IF_ghr_data_o),
         .set_data    ({EXMEM_ghr_data_i[(HISTORY_WIDTH-2):0],EXMEM_br_decision_i}),
