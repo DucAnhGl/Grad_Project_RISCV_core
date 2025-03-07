@@ -126,7 +126,7 @@ localparam HISTORY_WIDTH = 4;
         .EXMEM_btb_hit_i       (EXMEM_btb_hit),                  
         .EXMEM_prediction_i    (EXMEM_prediction),
         .EXMEM_br_decision_i   (EXMEM_true_br_decision),              
-        .EXMEM_is_jmp_i        (EXMEM_is_br || (EXMEM_is_uncbr==2'b10)),
+        .EXMEM_is_jmp_i        (EXMEM_is_br/* || (EXMEM_is_uncbr==2'b10)*/),
         .EXMEM_ghr_data_i      (EXMEM_ghr_data),
 
         .IF_btb_hit_o          (IF_btb_hit),    
@@ -458,7 +458,7 @@ lsu inst_lsu (
     .io_hex7_o  (io_hex7_o)    
 );
 
-assign EXMEM_is_jmp = EXMEM_is_br || (EXMEM_is_uncbr==2'b10);
+assign EXMEM_is_jmp = EXMEM_is_br/* || (EXMEM_is_uncbr==2'b10)*/;
 
 //MEMWB pipeline register: async rstn
 always @(posedge clk_i or negedge rst_ni) begin
