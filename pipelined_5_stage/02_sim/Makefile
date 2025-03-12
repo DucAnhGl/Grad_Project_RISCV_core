@@ -86,7 +86,7 @@ help:
 lint:
 	@echo
 	@echo "<>---------------- LINT CHECK ----------------"
-	@$(VERILATOR) $(LINT_FLAGS) $(FILELIST)
+	@$(VERILATOR) $(LINT_FLAGS) -f $(FILELIST)
 
 .PHONY: build
 build: #instruction_mem.mem #./obj_dir/Vtop 
@@ -137,8 +137,10 @@ else ifeq ($(PROGRAM), 7)
 	@riscv32-unknown-elf-as -o asm_output/out.o ../../programs/7_test_program.asm
 else ifeq ($(PROGRAM), 8)
 	@riscv32-unknown-elf-as -o asm_output/out.o ../../programs/8_complex_branch.asm
+else ifeq ($(PROGRAM), 9)
+	@riscv32-unknown-elf-as -o asm_output/out.o ../../programs/9_lsu_v2_test.asm
 else
-	$(error Invalid PROGRAM: $(PROGRAM). Choose from 1 to 7)
+	$(error Invalid PROGRAM: $(PROGRAM). Choose from 1 to 9)
 endif
 	@riscv32-unknown-elf-objcopy -O verilog asm_output/out.o instruction_mem.mem
 	@riscv32-unknown-elf-objdump -d asm_output/out.o > asm_output/output.asm
