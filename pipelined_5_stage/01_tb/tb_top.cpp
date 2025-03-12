@@ -9,7 +9,7 @@
 #include <verilated_fst_c.h>
 #include "Vtop.h"
 
-#define MAX_SIM_TIME 20000
+#define MAX_SIM_TIME 2000
 vluint64_t sim_time = 0;
 
 vluint64_t br_instr_counter = 0;
@@ -19,7 +19,7 @@ vluint64_t sim_cycle = 0;
 //reset assertion function 
 void dut_reset (Vtop *dut, vluint64_t &sim_time){
     dut->rst_ni = 1;
-    if(sim_time >= 3 && sim_time < 6){
+    if(sim_time >= 3 && sim_time < 5){
         dut->rst_ni = 0;
     }
 }

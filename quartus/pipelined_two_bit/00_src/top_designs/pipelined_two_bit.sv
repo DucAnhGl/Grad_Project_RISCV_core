@@ -140,7 +140,7 @@ localparam INDEX_WIDTH = 12;
     end
 
     //PC plus 4 adder
-    assign IF_pcplus4 = IF_pc + 32'h1;
+    assign IF_pcplus4 = IF_pc + 32'h4;
 
     //next PC select mux
     assign IF_pcnext = (IF_PCnext_sel == 2'b00) ? IF_pcplus4 :
