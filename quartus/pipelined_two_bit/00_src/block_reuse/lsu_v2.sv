@@ -240,7 +240,7 @@ module lsu_v2 (
             for (integer i = 0; i < 8; i = i+1) input_mem[i] <= 8'h00;
         end else begin
             {input_mem[3'h0+3'h3], input_mem[3'h0+3'h2], input_mem[3'h0+3'h1], input_mem[3'h0]} <= io_sw_i;
-            input_mem[3'h4] <= {4'h4, io_btn_i};
+            input_mem[3'h4] <= {4'h0, io_btn_i};
         end
     end
 

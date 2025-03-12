@@ -14,7 +14,7 @@ module imem (
     logic [31:0] instr_mem [0:8191];
 
     initial 
-    $readmemh("../02_sim/instruction_mem_padded.mem",instr_mem);
+    $readmemh("../01_imemdata/instruction_mem_padded.mem",instr_mem);
 
     assign data_o = instr_mem[addr_i];
 
