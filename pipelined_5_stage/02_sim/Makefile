@@ -121,12 +121,13 @@ PROGRAM ?= 1
 
 .PHONY: hex
 hex:
+	@riscv32-unknown-elf-as -o start.o start.s -march=rv32i -mabi=ilp32
 ifeq ($(PROGRAM), 1)
-	@riscv32-unknown-elf-as -o asm_output/out.o ../../programs/1_agree_friendly.asm
+	@riscv32-unknown-elf-gcc -o asm_output/out.o -c ../../programsC/1_agree_friendly.c -march=rv32i -mabi=ilp32
 else ifeq ($(PROGRAM), 2)
-	@riscv32-unknown-elf-as -o asm_output/out.o ../../programs/2_bubble_sort.asm
+	@riscv32-unknown-elf-gcc -o asm_output/out.o -c ../../programsC/2_test.c -march=rv32i -mabi=ilp32
 else ifeq ($(PROGRAM), 3)
-	@riscv32-unknown-elf-as -o asm_output/out.o ../../programs/3_ten_number_bubble_sort.asm
+	@riscv32-unknown-elf-gcc -o asm_output/out.o -c ../../programsC/3_test2.c -march=rv32i -mabi=ilp32
 else ifeq ($(PROGRAM), 4)
 	@riscv32-unknown-elf-as -o asm_output/out.o ../../programs/4_gshare_friendly.asm
 else ifeq ($(PROGRAM), 5)
@@ -142,8 +143,9 @@ else ifeq ($(PROGRAM), 9)
 else
 	$(error Invalid PROGRAM: $(PROGRAM). Choose from 1 to 9)
 endif
-	@riscv32-unknown-elf-objcopy -O verilog asm_output/out.o instruction_mem.mem
-	@riscv32-unknown-elf-objdump -d asm_output/out.o > asm_output/output.asm
+	@riscv32-unknown-elf-ld -o program.elf start.o asm_output/out.o -T firmware.ld
+	@riscv32-unknown-elf-objcopy -O verilog program.elf instruction_mem.mem
+	@riscv32-unknown-elf-objdump -d program.elf > asm_output/output.asm
 	@python3 fpga_imem_padding.py
 	@echo "00 00 00 00" >> instruction_mem.mem
 	@echo "Generated hex for Program: $(PROGRAM)"
