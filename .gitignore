@@ -10,3 +10,4 @@ pipelined_5_stage/02_sim/asm_output/output.asm
 *.bak
 /quartus/pipelined_two_bit/db
 /quartus/pipelined_two_bit/incremental_db
+/quartus/pipelined_two_bit/greybox_tmp

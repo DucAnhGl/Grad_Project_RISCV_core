@@ -1,10 +1,10 @@
-Analysis & Synthesis Status : Successful - Wed Mar 12 14:48:56 2025
+Analysis & Synthesis Status : Successful - Wed Mar 12 15:42:42 2025
 Quartus Prime Version : 18.1.0 Build 625 09/12/2018 SJ Lite Edition
 Revision Name : pipelined_two_bit
 Top-level Entity Name : pipelined_two_bit
 Family : Cyclone V
 Logic utilization (in ALMs) : N/A
-Total registers : 1303
+Total registers : 1319
 Total pins : 177
 Total virtual pins : 0
 Total block memory bits : 262,144

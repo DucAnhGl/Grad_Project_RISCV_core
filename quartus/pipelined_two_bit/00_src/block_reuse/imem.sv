@@ -1,6 +1,5 @@
 module imem (
     input  logic [31:0] addr_i,
-
     output logic [31:0] data_o
 );
 
