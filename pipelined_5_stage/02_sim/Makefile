@@ -6,8 +6,7 @@
 #*******************************************************************************
 RISCV_PREFIX = /opt/riscv/bin/riscv32-unknown-elf-
 CCFLAGS      = -O2 -march=rv32i -mabi=ilp32
-TARGET       = firmware/main
-OBJS         = firmware/main.o firmware/simrv.o firmware/startup.o firmware/acker.o firmware/fib.o firmware/nqueen.o firmware/qsort.o
+
 
 .SUFFIXES: .o .c .S
 
@@ -114,6 +113,7 @@ wave: wave.fst
 clean:
 	@rm -rf obj_dir
 	@rm -f *.fst
+	@rm -f bench/test/*.o bench/test/*.bin bench/test/*.elf bench/test/*.dump bench/test/*.hex
 	@echo "<> CLEAN ---------------------"
 
 .PHONY: all
@@ -124,6 +124,13 @@ all:
 	make sim
 
 PROGRAM ?= 1
+
+ifeq ($(PROGRAM), 1)
+TARGET       = bench/test/main
+OBJS         = bench/test/main.o bench/test/simrv.o startup.o bench/test/acker.o bench/test/fib.o bench/test/nqueen.o bench/test/qsort.o
+else ifeq ($(PROGRAM), 2)
+TARGET       = bench/coremark/coremark
+endif
 
 .PHONY: hex
 hex: 
@@ -140,7 +147,10 @@ ifeq ($(PROGRAM), 1)
 	make dump
 	make file
 else ifeq ($(PROGRAM), 2)
-	@riscv32-unknown-elf-gcc -o asm_output/out.o -c ../../programsC/2_test.c -march=rv32i -mabi=ilp32
+	make hex1
+	make hex4
+	make file
+	cp $(TARGET).dump asm_output/output.asm
 else ifeq ($(PROGRAM), 3)
 	@riscv32-unknown-elf-gcc -o asm_output/out.o -c ../../programsC/3_test2.c -march=rv32i -mabi=ilp32
 else
@@ -151,7 +161,7 @@ endif
 
 bin: $(TARGET).bin
 
-$(TARGET).elf: firmware/main.lds $(OBJS)
+$(TARGET).elf: linker.lds $(OBJS)
 	$(RISCV_PREFIX)ld -T $< -o $@ $(OBJS)
 
 $(TARGET).bin: $(TARGET).elf
@@ -164,9 +174,6 @@ $(TARGET).bin: $(TARGET).elf
 	$(RISCV_PREFIX)gcc $(CCFLAGS) -o $@ -c $<
 
 ###############################################################################
-
-clean1:
-	rm -f firmware/*.o firmware/*.bin firmware/*.elf firmware/*.dump firmware/*.hex
 
 dump:
 	$(RISCV_PREFIX)objdump -D $(TARGET).elf > $(TARGET).dump

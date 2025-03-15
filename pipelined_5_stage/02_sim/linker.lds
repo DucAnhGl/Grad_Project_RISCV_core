@@ -14,7 +14,7 @@ SECTIONS
     . = 0x00000000;
     .startup : 
     {
-        firmware/startup.o(.text) 
+        startup.o(.text) 
     } > IMEM
 
     .text :
