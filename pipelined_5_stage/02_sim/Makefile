@@ -4,6 +4,12 @@
 #*******************************************************************************
 # Copyright (c) 2022 Hai Cao Xuan
 #*******************************************************************************
+RISCV_PREFIX = /opt/riscv/bin/riscv32-unknown-elf-
+CCFLAGS      = -O2 -march=rv32i -mabi=ilp32
+TARGET       = firmware/main
+OBJS         = firmware/main.o firmware/simrv.o firmware/startup.o firmware/acker.o firmware/fib.o firmware/nqueen.o firmware/qsort.o
+
+.SUFFIXES: .o .c .S
 
 PREDICTOR ?= 1
 
@@ -120,35 +126,59 @@ all:
 PROGRAM ?= 1
 
 .PHONY: hex
-hex:
-	@riscv32-unknown-elf-as -o start.o start.s -march=rv32i -mabi=ilp32
+hex: 
 ifeq ($(PROGRAM), 1)
-	@riscv32-unknown-elf-gcc -o asm_output/out.o -c ../../programsC/1_agree_friendly.c -march=rv32i -mabi=ilp32
+	make bin
+# padding
+	cp $(TARGET).bin $(TARGET)_.bin
+	dd if=/dev/zero bs=8k count=1 >> $(TARGET)_.bin
+	dd if=$(TARGET)_.bin bs=8k count=1 > $(TARGET).bin
+	rm -f $(TARGET)_.bin
+# create hex file
+	make hex1
+	make hex4
+	make dump
+	make file
 else ifeq ($(PROGRAM), 2)
 	@riscv32-unknown-elf-gcc -o asm_output/out.o -c ../../programsC/2_test.c -march=rv32i -mabi=ilp32
 else ifeq ($(PROGRAM), 3)
 	@riscv32-unknown-elf-gcc -o asm_output/out.o -c ../../programsC/3_test2.c -march=rv32i -mabi=ilp32
-else ifeq ($(PROGRAM), 4)
-	@riscv32-unknown-elf-as -o asm_output/out.o ../../programs/4_gshare_friendly.asm
-else ifeq ($(PROGRAM), 5)
-	@riscv32-unknown-elf-as -o asm_output/out.o ../../programs/5_fibonacci.asm
-else ifeq ($(PROGRAM), 6)
-	@riscv32-unknown-elf-as -o asm_output/out.o ../../programs/6_delay_function.asm
-else ifeq ($(PROGRAM), 7)
-	@riscv32-unknown-elf-as -o asm_output/out.o ../../programs/7_test_program.asm
-else ifeq ($(PROGRAM), 8)
-	@riscv32-unknown-elf-as -o asm_output/out.o ../../programs/8_complex_branch.asm
-else ifeq ($(PROGRAM), 9)
-	@riscv32-unknown-elf-as -o asm_output/out.o ../../programs/9_lsu_v2_test.asm
 else
 	$(error Invalid PROGRAM: $(PROGRAM). Choose from 1 to 9)
 endif
-	@riscv32-unknown-elf-ld -o program.elf start.o asm_output/out.o -T firmware.ld
-	@riscv32-unknown-elf-objcopy -O verilog program.elf instruction_mem.mem
-	@riscv32-unknown-elf-objdump -d program.elf > asm_output/output.asm
-	@python3 fpga_imem_padding.py
-	@echo "00 00 00 00" >> instruction_mem.mem
-	@echo "Generated hex for Program: $(PROGRAM)"
 
+###############################################################################
 
+bin: $(TARGET).bin
+
+$(TARGET).elf: firmware/main.lds $(OBJS)
+	$(RISCV_PREFIX)ld -T $< -o $@ $(OBJS)
+
+$(TARGET).bin: $(TARGET).elf
+	$(RISCV_PREFIX)objcopy -O binary $< $@
+
+.c.o:
+	$(RISCV_PREFIX)gcc $(CCFLAGS) -o $@ -c $<
+
+.S.o:
+	$(RISCV_PREFIX)gcc $(CCFLAGS) -o $@ -c $<
+
+###############################################################################
+
+clean1:
+	rm -f firmware/*.o firmware/*.bin firmware/*.elf firmware/*.dump firmware/*.hex
+
+dump:
+	$(RISCV_PREFIX)objdump -D $(TARGET).elf > $(TARGET).dump
+
+hex1:
+	hexdump -v -e '1/1 "%02x" "\n"' $(TARGET).bin > $(TARGET)1.hex
+
+hex4:
+	hexdump -v -e '1/4 "%08x" "\n"' $(TARGET).bin > $(TARGET)4.hex
+
+file:
+	cp $(TARGET)1.hex instruction_mem.mem
+	cp $(TARGET)4.hex instruction_mem_padded.mem
+	cp $(TARGET).dump asm_output/output.asm
 

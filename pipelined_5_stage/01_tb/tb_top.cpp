@@ -9,7 +9,7 @@
 #include <verilated_fst_c.h>
 #include "Vtop.h"
 
-#define MAX_SIM_TIME 200
+#define MAX_SIM_TIME 100000
 vluint64_t sim_time = 0;
 
 vluint64_t br_instr_counter = 0;
@@ -33,7 +33,7 @@ int main(int argc, char** argv, char** env) {
     dut->trace(m_trace, 4);
     m_trace->open("wave.fst");
 
-    while ((dut->instr != 0) && (sim_time < MAX_SIM_TIME)) {
+    while ((dut->instr != 0x0000006F) && (sim_time < MAX_SIM_TIME)) { // 0x0000006F = jal x0, 0
         dut_reset(dut, sim_time);         // Call reset function
         dut->clk_i ^= 1;
         dut->eval();
