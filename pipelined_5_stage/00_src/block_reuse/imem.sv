@@ -4,7 +4,7 @@ module imem (
     output logic [31:0] data_o
 );
 
-    logic [7:0] instr_mem [0:8191];
+    logic [7:0] instr_mem [0:131071]; //128k
 
     initial
     $readmemh("../02_sim/instruction_mem.mem",instr_mem);

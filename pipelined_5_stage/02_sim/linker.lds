@@ -5,8 +5,8 @@ ENTRY(_mystart)
 
 MEMORY
 {
-    IMEM (rx) : ORIGIN = 0x00000000, LENGTH = 4k   /* 32k size for instruction memory */
-    DMEM (rwx) : ORIGIN = 0x00001000, LENGTH = 32k   /* 32k size for data memory */
+    IMEM (rx) : ORIGIN = 0x00000000, LENGTH = 128k   /* 128k size for instruction memory */
+    DMEM (rwx) : ORIGIN = 0x00020000, LENGTH = 128k   /* 128k size for data memory */
 }
 
 SECTIONS
