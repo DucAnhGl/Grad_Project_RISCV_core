@@ -2,9 +2,9 @@
 ##### SimRV/RISC-V since 2018-07-05                  ArchLab. TokyoTech   #####
 ###############################################################################
 
-.globl  _start
+.globl  _mystart
 
-_start:
+_mystart:
 	nop
 	add x0, x0, x0
 	add x1, x0, x0
@@ -43,4 +43,4 @@ _start:
 	j      main       # jump to the main
 	nop
 
-.end _start
+.end _mystart

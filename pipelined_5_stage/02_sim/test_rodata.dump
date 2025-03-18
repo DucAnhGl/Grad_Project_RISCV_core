@@ -1,0 +1,74 @@
+
+test_rodata.elf:     file format elf32-littleriscv
+
+
+Disassembly of section .startup:
+
+00000000 <_mystart>:
+   0:	00000013          	nop
+   4:	00000033          	add	zero,zero,zero
+   8:	000000b3          	add	ra,zero,zero
+   c:	00000133          	add	sp,zero,zero
+  10:	000001b3          	add	gp,zero,zero
+  14:	00000233          	add	tp,zero,zero
+  18:	000002b3          	add	t0,zero,zero
+  1c:	00000333          	add	t1,zero,zero
+  20:	000003b3          	add	t2,zero,zero
+  24:	00000433          	add	s0,zero,zero
+  28:	000004b3          	add	s1,zero,zero
+  2c:	00000533          	add	a0,zero,zero
+  30:	000005b3          	add	a1,zero,zero
+  34:	00000633          	add	a2,zero,zero
+  38:	000006b3          	add	a3,zero,zero
+  3c:	00000733          	add	a4,zero,zero
+  40:	000007b3          	add	a5,zero,zero
+  44:	00000833          	add	a6,zero,zero
+  48:	000008b3          	add	a7,zero,zero
+  4c:	00000933          	add	s2,zero,zero
+  50:	000009b3          	add	s3,zero,zero
+  54:	00000a33          	add	s4,zero,zero
+  58:	00000ab3          	add	s5,zero,zero
+  5c:	00000b33          	add	s6,zero,zero
+  60:	00000bb3          	add	s7,zero,zero
+  64:	00000c33          	add	s8,zero,zero
+  68:	00000cb3          	add	s9,zero,zero
+  6c:	00000d33          	add	s10,zero,zero
+  70:	00000db3          	add	s11,zero,zero
+  74:	00000e33          	add	t3,zero,zero
+  78:	00000eb3          	add	t4,zero,zero
+  7c:	00000f33          	add	t5,zero,zero
+  80:	00000fb3          	add	t6,zero,zero
+  84:	00001137          	lui	sp,0x1
+  88:	0080006f          	j	90 <main>
+  8c:	00000013          	nop
+
+Disassembly of section .text:
+
+00000090 <main>:
+  90:	fe010113          	addi	sp,sp,-32 # fe0 <main+0xf50>
+  94:	00112e23          	sw	ra,28(sp)
+  98:	00812c23          	sw	s0,24(sp)
+  9c:	02010413          	addi	s0,sp,32
+  a0:	000087b7          	lui	a5,0x8
+  a4:	40078793          	addi	a5,a5,1024 # 8400 <main+0x8370>
+  a8:	fef42623          	sw	a5,-20(s0)
+  ac:	0000006f          	j	ac <main+0x1c>
+
+Disassembly of section .rodata:
+
+00008000 <.rodata>:
+	...
+    8400:	6548                	.insn	2, 0x6548
+    8402:	6c6c                	.insn	2, 0x6c6c
+    8404:	74202c6f          	jal	s8,ab46 <main+0xaab6>
+    8408:	6968                	.insn	2, 0x6968
+    840a:	73692073          	.insn	4, 0x73692073
+    840e:	6120                	.insn	2, 0x6120
+    8410:	7220                	.insn	2, 0x7220
+    8412:	6165                	.insn	2, 0x6165
+    8414:	2d64                	.insn	2, 0x2d64
+    8416:	796c6e6f          	jal	t3,cebac <main+0xceb1c>
+    841a:	7320                	.insn	2, 0x7320
+    841c:	7274                	.insn	2, 0x7274
+    841e:	6e69                	.insn	2, 0x6e69
+    8420:	000a2167          	.insn	4, 0x000a2167

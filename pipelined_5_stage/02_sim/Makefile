@@ -130,6 +130,10 @@ TARGET       = bench/test/main
 OBJS         = bench/test/main.o bench/test/simrv.o startup.o bench/test/acker.o bench/test/fib.o bench/test/nqueen.o bench/test/qsort.o
 else ifeq ($(PROGRAM), 2)
 TARGET       = bench/coremark/coremark
+else ifeq ($(PROGRAM), 3)
+TARGET       = coremark
+else ifeq ($(PROGRAM), 4)
+TARGET       = bench/test/test_rodata
 endif
 
 .PHONY: hex
@@ -137,10 +141,7 @@ hex:
 ifeq ($(PROGRAM), 1)
 	make bin
 # padding
-	cp $(TARGET).bin $(TARGET)_.bin
-	dd if=/dev/zero bs=8k count=1 >> $(TARGET)_.bin
-	dd if=$(TARGET)_.bin bs=8k count=1 > $(TARGET).bin
-	rm -f $(TARGET)_.bin
+	make padding
 # create hex file
 	make hex1
 	make hex4
@@ -150,9 +151,41 @@ else ifeq ($(PROGRAM), 2)
 	make hex1
 	make hex4
 	make file
-	cp $(TARGET).dump asm_output/output.asm
 else ifeq ($(PROGRAM), 3)
-	@riscv32-unknown-elf-gcc -o asm_output/out.o -c ../../programsC/3_test2.c -march=rv32i -mabi=ilp32
+	@riscv32-unknown-elf-gcc -nostartfiles -O2 \
+		-o coremark.elf \
+		-T linker.lds \
+		core_list_join.c core_main.c core_matrix.c core_state.c core_util.c \
+		simple/core_portme.c \
+		-DPERFORMANCE_RUN=1 -DITERATIONS=10 -DFLAGS_STR="\"-o3\"" \
+		startup.S
+	make bin
+# padding
+	make padding
+# create hex file
+	make hex1
+	make hex4
+	make dump
+	make file
+else ifeq ($(PROGRAM), 4)
+	@riscv32-unknown-elf-gcc -nostartfiles -o startup.o startup.S
+	@riscv32-unknown-elf-gcc -nostartfiles -O2 \
+		-o test_rodata.elf \
+		-T linker.lds \
+		bench/test_rodata/test_rodata.c \
+		startup.o
+	make bin
+# padding
+	make padding
+# create hex file
+	make hex1
+	make hex4
+	make dump
+	make file
+else ifeq ($(PROGRAM), 5)
+	@riscv32-unknown-elf-as -o startup.o startup.S -march=rv32i -mabi=ilp32
+	@riscv32-unknown-elf-gcc -nostartfiles -o test_rodata.elf test_rodata.c -T linker.lds startup.o
+	@riscv32-unknown-elf-objdump -D test_rodata.elf > test_rodata.dump
 else
 	$(error Invalid PROGRAM: $(PROGRAM). Choose from 1 to 9)
 endif
@@ -178,6 +211,12 @@ $(TARGET).bin: $(TARGET).elf
 dump:
 	$(RISCV_PREFIX)objdump -D $(TARGET).elf > $(TARGET).dump
 
+padding:
+	cp $(TARGET).bin $(TARGET)_.bin
+	dd if=/dev/zero bs=8k count=1 >> $(TARGET)_.bin
+	dd if=$(TARGET)_.bin bs=8k count=1 > $(TARGET).bin
+#	rm -f $(TARGET)_.bin
+
 hex1:
 	hexdump -v -e '1/1 "%02x" "\n"' $(TARGET).bin > $(TARGET)1.hex
 
@@ -189,3 +228,5 @@ file:
 	cp $(TARGET)4.hex instruction_mem_padded.mem
 	cp $(TARGET).dump asm_output/output.asm
 
+abc:
+	$(RISCV_PREFIX)gcc $(CCFLAGS) -o dhrystone.o dhrystone.c
