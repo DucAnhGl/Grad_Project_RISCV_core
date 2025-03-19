@@ -7,7 +7,6 @@
 RISCV_PREFIX = /opt/riscv/bin/riscv32-unknown-elf-
 CCFLAGS      = -O2 -march=rv32i -mabi=ilp32
 
-
 .SUFFIXES: .o .c .S
 
 PREDICTOR ?= 1
@@ -113,9 +112,10 @@ wave: wave.fst
 clean:
 	@rm -rf obj_dir
 	@rm -f *.fst
-	@rm -f asm_output/output.asm asm_output/out.o
+	@rm -f asm_output/output.asm asm_output/out.o startup.o
 	@rm -f bench/test/*.o bench/test/*.bin bench/test/*.elf bench/test/*.dump bench/test/*.hex
 	@rm -rf bench/RV32IM-CoreMark/build/*
+	@rm -f $(RAM_FILES) $(DATA_MEM_FILE) instruction_mem.mem instruction_mem_padded.mem
 	@echo "<> CLEAN ---------------------"
 
 .PHONY: all
@@ -153,6 +153,9 @@ endif
 ifeq ($(PROGRAM), test)
 TARGET       = bench/test/main
 PADSIZE		 = 8k
+else ifeq ($(PROGRAM), coremark)
+TARGET       = bench/RV32IM-CoreMark/build/coremark
+PADSIZE		 = 128k
 endif
 
 .PHONY: hexc
@@ -170,8 +173,15 @@ ifeq ($(PROGRAM), test)
 	make hex4
 	make dump
 	make file
+	make ram
 else ifeq ($(PROGRAM), coremark)
 	$(MAKE) -C bench/RV32IM-CoreMark
+	make padding
+	make hex1
+	make hex4
+	make dump
+	make file
+	make ram
 else
 	$(error Invalid PROGRAM: $(PROGRAM). Choose from 1 to 7)
 endif
@@ -197,4 +207,37 @@ file:
 	cp $(TARGET)1.hex instruction_mem.mem
 	cp $(TARGET)4.hex instruction_mem_padded.mem
 	cp $(TARGET).dump asm_output/output.asm
+
+###############################################################################
+
+# Variables
+INSTRUCTIONS = instruction_mem_padded.mem
+RAM_DIR = dmem
+RAM_FILES = $(RAM_DIR)/ram0.mem $(RAM_DIR)/ram1.mem $(RAM_DIR)/ram2.mem $(RAM_DIR)/ram3.mem
+DATA_MEM_FILE = data_mem_padded.mem
+
+# Default target for making the RAM files and data file
+ram: $(RAM_FILES)
+
+# Rule to create the dmem directory if it doesn't exist
+$(RAM_DIR):
+	mkdir -p $(RAM_DIR)
+
+# Rule to create the data_mem_padded.mem file (cut and save lines from 16385 to end)
+$(DATA_MEM_FILE): $(INSTRUCTIONS)
+	sed -n '16385,$$p' $(INSTRUCTIONS) > $(DATA_MEM_FILE)
+	sed -i '16385,$$d' $(INSTRUCTIONS)
+
+# Rule to create the RAM files from data_mem_padded.mem
+$(RAM_DIR)/ram0.mem: $(DATA_MEM_FILE) $(RAM_DIR)
+	@awk '{ print substr($$1, 7, 2) }' $(DATA_MEM_FILE) > $(RAM_DIR)/ram0.mem
+
+$(RAM_DIR)/ram1.mem: $(DATA_MEM_FILE) $(RAM_DIR)
+	@awk '{ print substr($$1, 5, 2) }' $(DATA_MEM_FILE) > $(RAM_DIR)/ram1.mem
+
+$(RAM_DIR)/ram2.mem: $(DATA_MEM_FILE) $(RAM_DIR)
+	@awk '{ print substr($$1, 3, 2) }' $(DATA_MEM_FILE) > $(RAM_DIR)/ram2.mem
+
+$(RAM_DIR)/ram3.mem: $(DATA_MEM_FILE) $(RAM_DIR)
+	@awk '{ print substr($$1, 1, 2) }' $(DATA_MEM_FILE) > $(RAM_DIR)/ram3.mem
 
