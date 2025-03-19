@@ -13,10 +13,7 @@ SECTIONS
     . = 0x00000000;
     .startup : 
     {
-        /home/linh/Documents/GitHub/Grad_Project_RISCV_core/RV32IM-CoreMark/build/init_asm.o(.text)
-/*      
-../../build/init_asm.o(.text) 
-*/
+        /home/linh/Documents/GitHub/Grad_Project_RISCV_core/pipelined_5_stage/02_sim/bench/RV32IM-CoreMark/build/init_asm.o(.text)
     } > IMEM
 
 

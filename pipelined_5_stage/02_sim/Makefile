@@ -113,9 +113,9 @@ wave: wave.fst
 clean:
 	@rm -rf obj_dir
 	@rm -f *.fst
-	@rm -r asm_output/output.asm asm_output/out.o
+	@rm -f asm_output/output.asm asm_output/out.o
 	@rm -f bench/test/*.o bench/test/*.bin bench/test/*.elf bench/test/*.dump bench/test/*.hex
-	@rm -r ../../RV32IM-CoreMark/build/*
+	@rm -rf bench/RV32IM-CoreMark/build/*
 	@echo "<> CLEAN ---------------------"
 
 .PHONY: all
@@ -171,7 +171,7 @@ ifeq ($(PROGRAM), test)
 	make dump
 	make file
 else ifeq ($(PROGRAM), coremark)
-	$(MAKE) -C ../../RV32IM-CoreMark
+	$(MAKE) -C bench/RV32IM-CoreMark
 else
 	$(error Invalid PROGRAM: $(PROGRAM). Choose from 1 to 7)
 endif
