@@ -113,7 +113,9 @@ wave: wave.fst
 clean:
 	@rm -rf obj_dir
 	@rm -f *.fst
+	@rm -r asm_output/output.asm asm_output/out.o
 	@rm -f bench/test/*.o bench/test/*.bin bench/test/*.elf bench/test/*.dump bench/test/*.hex
+	@rm -r ../../RV32IM-CoreMark/build/*
 	@echo "<> CLEAN ---------------------"
 
 .PHONY: all
@@ -125,62 +127,55 @@ all:
 
 PROGRAM ?= 1
 
+.PHONY: hex
+hex:
 ifeq ($(PROGRAM), 1)
-TARGET       = bench/test/main
-PADSIZE		 = 8k
+	$(RISCV_PREFIX)as -o asm_output/out.o ../../programs/1_agree_friendly.asm
 else ifeq ($(PROGRAM), 2)
-TARGET       = bench/coremark/coremark
-PADSIZE		 = 160k
+	$(RISCV_PREFIX)as -o asm_output/out.o ../../programs/2_bubble_sort.asm
+else ifeq ($(PROGRAM), 3)
+	$(RISCV_PREFIX)as -o asm_output/out.o ../../programs/3_ten_number_bubble_sort.asm
+else ifeq ($(PROGRAM), 4)
+	$(RISCV_PREFIX)as -o asm_output/out.o ../../programs/4_gshare_friendly.asm
+else ifeq ($(PROGRAM), 5)
+	$(RISCV_PREFIX)as -o asm_output/out.o ../../programs/5_fibonacci.asm
+else ifeq ($(PROGRAM), 6)
+	$(RISCV_PREFIX)as -o asm_output/out.o ../../programs/6_delay_function.asm
+else ifeq ($(PROGRAM), 7)
+	$(RISCV_PREFIX)as -o asm_output/out.o ../../programs/7_test_program.asm
+else ifeq ($(PROGRAM), 8)
+	$(RISCV_PREFIX)as -o asm_output/out.o ../../programs/8_complex_branch.asm
+else
+	$(error Invalid PROGRAM: $(PROGRAM). Choose from 1 to 7)
 endif
 
-.PHONY: hex
-hex: 
-ifeq ($(PROGRAM), 1)
-# create startup.o file
-	@riscv32-unknown-elf-as -o startup.o startup.S -march=rv32i -mabi=ilp32
-# create elf file
-	@riscv32-unknown-elf-gcc -nostartfiles -O2 \
+
+ifeq ($(PROGRAM), test)
+TARGET       = bench/test/main
+PADSIZE		 = 8k
+endif
+
+.PHONY: hexc
+hexc:
+ifeq ($(PROGRAM), test)
+	$(RISCV_PREFIX)as -o startup.o startup.S -march=rv32i -mabi=ilp32
+	$(RISCV_PREFIX)gcc -nostartfiles -O2 \
 		-o bench/test/main.elf \
 		-T linker.lds \
 		bench/test/main.c bench/test/simrv.c bench/test/acker.c bench/test/fib.c bench/test/nqueen.c bench/test/qsort.c \
 		startup.o
-# create bin file
-	@riscv32-unknown-elf-objcopy -O binary bench/test/main.elf bench/test/main.bin
-# padding bin file
+	$(RISCV_PREFIX)objcopy -O binary bench/test/main.elf bench/test/main.bin
 	make padding
-# create hex file
 	make hex1
 	make hex4
-# create asm dump	
 	make dump
-# create instruction mem
 	make file
-else ifeq ($(PROGRAM), 2)
-# create startup.o file
-	@riscv32-unknown-elf-as -o startup.o startup.S -march=rv32i -mabi=ilp32
-# create elf file
-	@riscv32-unknown-elf-gcc -nostartfiles -O2 \
- 		-o bench/coremark/coremark.elf \
- 		-T linker.lds \
- 		bench/coremark/core_list_join.c bench/coremark/core_main.c bench/coremark/core_matrix.c bench/coremark/core_state.c bench/coremark/core_util.c \
- 		bench/coremark/simple/core_portme.c \
-		startup.o \
- 		-DPERFORMANCE_RUN=1 -DITERATIONS=10 -DFLAGS_STR="\"-o3\""
-# create bin file
-	@riscv32-unknown-elf-objcopy -O binary bench/coremark/coremark.elf bench/coremark/coremark.bin
-# padding bin file
-	make padding
-# create hex file
-	make hex1
-	make hex4
-# create asm dump	
-	make dump
-# create instruction mem
-	make file
-	
+else ifeq ($(PROGRAM), coremark)
+	$(MAKE) -C ../../RV32IM-CoreMark
 else
-	$(error Invalid PROGRAM: $(PROGRAM). Choose from 1 to 9)
+	$(error Invalid PROGRAM: $(PROGRAM). Choose from 1 to 7)
 endif
+	
 
 ###############################################################################
 padding:
