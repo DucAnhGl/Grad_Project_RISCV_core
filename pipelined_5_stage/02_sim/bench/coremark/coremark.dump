@@ -22045,7 +22045,7 @@ Disassembly of section .sdata:
 	...
 
 00020010 <seed4_volatile>:
-   20010:	0064                	.insn	2, 0x0064
+   20010:	000a                	.insn	2, 0x000a
 	...
 
 00020014 <seed3_volatile>:

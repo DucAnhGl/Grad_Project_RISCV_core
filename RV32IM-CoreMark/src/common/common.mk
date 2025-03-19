@@ -37,7 +37,7 @@ $(bld_dir)/%.o: %.S
 $(bld_dir)/%.o: %.c
 	$(RISCV_GCC) $(CFLAGS) -c $(incs) $< -o $@
 
-$(bld_dir)/coremark.elf: $(ld_script) $(c_objs) $(asm_objs)
+$(bld_dir)/coremark.elf: $(ld_script) $(c_objs) $(asm_objs) 
 	$(RISCV_GCC) -o $@ -T $^ $(LDFLAGS)
 	riscv32-unknown-elf-strip --remove-section=.debug $(bld_dir)/coremark.elf
 
