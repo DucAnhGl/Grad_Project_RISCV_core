@@ -1,8 +1,8 @@
 
 li  x1 , 0xDEADBEEF # load test value into register
-li  x2 , 0x8000     # address of LEDR
-li  x3 , 0x8004     # address of HEX0
-li  x4 , 0x2000     # address of a byte in Data memory
+li  x2 , 0x20000    # address of LEDR
+li  x3 , 0x20004    # address of HEX0
+li  x4 , 0x13000    # address of a byte in Data memory
 
 sb  x1 , 0(x2)      # LEDR = 0x0000_00EF
 lb  x10, 0(x2)      # x10 = 0xFFFF_FFEF

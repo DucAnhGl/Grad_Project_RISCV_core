@@ -14,12 +14,12 @@
 #define tx_FREE ((UART[5]>>4) & 0x1)
 #define CIFRAS 10E3
 static void sendUART(char c){
-			if(c=='\n'){
-				sendUART('\r');
-			}
-			if(isFIFO){	while( txFIFO_FULL );}//txFIFO is used
-			else{ while( !tx_FREE ); }//txFIFO is not used	
-			UART[2] = c;
+			// if(c=='\n'){
+			// 	sendUART('\r');
+			// }
+			// if(isFIFO){	while( txFIFO_FULL );}//txFIFO is used
+			// else{ while( !tx_FREE ); }//txFIFO is not used	
+			// UART[2] = c;
 }
 
 
@@ -255,11 +255,11 @@ signed_number:
 int
 sc_printf(const char* fmt, ...)
 {
-    va_list ap;
-    va_start(ap, fmt);
+    // va_list ap;
+    // va_start(ap, fmt);
 
-    vprintfmt(printf_putch, NULL, fmt, ap);
+    // vprintfmt(printf_putch, NULL, fmt, ap);
 
-    va_end(ap);
-    return 0; // incorrect return value, but who cares, anyway?
+    // va_end(ap);
+    // return 0; // incorrect return value, but who cares, anyway?
 }

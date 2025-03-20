@@ -120,7 +120,6 @@ clean:
 
 .PHONY: all
 all: 
-	make clean
 	@echo "Using Predictor: $(PREDICTOR_NAME)"
 	make build
 	make sim
@@ -145,14 +144,21 @@ else ifeq ($(PROGRAM), 7)
 	$(RISCV_PREFIX)as -o asm_output/out.o ../../programs/7_test_program.asm
 else ifeq ($(PROGRAM), 8)
 	$(RISCV_PREFIX)as -o asm_output/out.o ../../programs/8_complex_branch.asm
+else ifeq ($(PROGRAM), 9)
+	$(RISCV_PREFIX)as -o asm_output/out.o ../../programs/9_lsu_v2_test.asm
 else
-	$(error Invalid PROGRAM: $(PROGRAM). Choose from 1 to 7)
+	$(error Invalid PROGRAM: $(PROGRAM). Choose from 1 to 9)
 endif
+
+	@riscv32-unknown-elf-objcopy -O verilog asm_output/out.o instruction_mem.mem
+	@riscv32-unknown-elf-objdump -d asm_output/out.o > asm_output/output.asm
+	@echo "00 00 00 00" >> instruction_mem.mem
+	@echo "Generated hex for Program: $(PROGRAM)"
 
 
 ifeq ($(PROGRAM), test)
 TARGET       = bench/test/main
-PADSIZE		 = 8k
+PADSIZE		 = 128k
 else ifeq ($(PROGRAM), coremark)
 TARGET       = bench/RV32IM-CoreMark/build/coremark
 PADSIZE		 = 128k

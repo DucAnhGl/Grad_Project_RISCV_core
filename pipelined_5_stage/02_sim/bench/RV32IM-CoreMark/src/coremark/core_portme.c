@@ -69,15 +69,15 @@ CORETIMETYPE barebones_clock() {
 */
 void start_insn()
 {
-	INSNC[1]=3;//reset
-	INSNC[1]=2;//enable
+	// INSNC[1]=3;//reset
+	// INSNC[1]=2;//enable
 }
 /* Function : insn
 	This function stops the instruction counter
 */
 void stop_insn()
 {
-	INSNC[1]=0;//disable
+	// INSNC[1]=0;//disable
 }
 /** Define Host specific (POSIX), or target specific global time variables. */
 static CORETIMETYPE start_time_val, stop_time_val;
@@ -89,12 +89,12 @@ static CORETIMETYPE start_time_val, stop_time_val;
 	or zeroing some system parameters - e.g. setting the cpu clocks cycles to 0.
 */
 void start_time(void) {
-	start_insn();//start instruction counter
+	// start_insn();//start instruction counter
 	
-	TIMER[0]=0xFFFFFFFF;
-	TIMER[1]=3;//reset
-	TIMER[1]=1;//enable
-	start_time_val= (clock_t) TIMER[3];
+	// TIMER[0]=0xFFFFFFFF;
+	// TIMER[1]=3;//reset
+	// TIMER[1]=1;//enable
+	// start_time_val= (clock_t) TIMER[3];
 	//GETMYTIME(&start_time_val );
 }
 /* Function : stop_time
@@ -104,11 +104,11 @@ void start_time(void) {
 	or other system parameters - e.g. reading the current value of cpu cycles counter.
 */
 void stop_time(void) {
-	stop_insn();//stope instruction counter
-	TIMER[1]=0;//disable
-	stop_time_val=(clock_t) TIMER[3];
-	//GETMYTIME(&stop_time_val );
-	INSNC[1]=0;//disable
+	// stop_insn();//stope instruction counter
+	// TIMER[1]=0;//disable
+	// stop_time_val=(clock_t) TIMER[3];
+	// //GETMYTIME(&stop_time_val );
+	// INSNC[1]=0;//disable
 }
 
 /* Function : insn
@@ -116,9 +116,9 @@ void stop_time(void) {
 */
 int insn()
 {
-	int cycles;
-	cycles=INSNC[2];
-	return cycles;
+	// int cycles;
+	// cycles=INSNC[2];
+	// return cycles;
 }
 /* Function : get_time
 	Return an abstract "ticks" number that signifies time on the system.
@@ -130,8 +130,8 @@ int insn()
 	and the resolution is controlled by <TIMER_RES_DIVIDER>
 */
 CORE_TICKS get_time(void) {
-	CORE_TICKS elapsed=(CORE_TICKS)(MYTIMEDIFF(stop_time_val, start_time_val));
-	return elapsed;
+	// CORE_TICKS elapsed=(CORE_TICKS)(MYTIMEDIFF(stop_time_val, start_time_val));
+	// return elapsed;
 }
 /* Function : time_in_secs
 	Convert the value returned by get_time to seconds.
@@ -140,8 +140,8 @@ CORE_TICKS get_time(void) {
 	Default implementation implemented by the EE_TICKS_PER_SEC macro above.
 */
 secs_ret time_in_secs(CORE_TICKS ticks) {
-	secs_ret retval=((secs_ret)ticks) / (secs_ret)EE_TICKS_PER_SEC;
-	return retval;
+	// secs_ret retval=((secs_ret)ticks) / (secs_ret)EE_TICKS_PER_SEC;
+	// return retval;
 }
 
 ee_u32 default_num_contexts=1;
@@ -151,31 +151,31 @@ ee_u32 default_num_contexts=1;
 	Test for some common mistakes.
 */
 void delay_ms( int ms ){ 
-	TIMER[0]=(CLOCKS_PER_SEC/1000);//set timer count
-	for(int cnt=0;cnt<ms;cnt++){
-		TIMER[1]=3;//reset
-		TIMER[1]=1;//enable
-		while(!(TIMER[2]&0x1));//check for end
-	}
+	// TIMER[0]=(CLOCKS_PER_SEC/1000);//set timer count
+	// for(int cnt=0;cnt<ms;cnt++){
+	// 	TIMER[1]=3;//reset
+	// 	TIMER[1]=1;//enable
+	// 	while(!(TIMER[2]&0x1));//check for end
+	// }
 }
 void UART_INIT(const int baud){
-	UART[0]=0x0888;//Line control register
-	UART[1]=CLOCKS_PER_SEC/baud;//set clock ticks baudrate to measured
-	UART[3]=0x10;//baudrate selector set to manual and keep dma
+	// UART[0]=0x0888;//Line control register
+	// UART[1]=CLOCKS_PER_SEC/baud;//set clock ticks baudrate to measured
+	// UART[3]=0x10;//baudrate selector set to manual and keep dma
 }
 void portable_init(core_portable *p, int *argc, char *argv[])
 {
-	UART_INIT(9600);
-	delay_ms(100);  
-  ee_printf("CoreMark 1.0\n");
+// 	UART_INIT(9600);
+// 	delay_ms(100);  
+//   ee_printf("CoreMark 1.0\n");
   
-	if (sizeof(ee_ptr_int) != sizeof(ee_u8 *)) {
-		ee_printf("ERROR! Please define ee_ptr_int to a type that holds a pointer! (%u != %u)\n", sizeof(ee_ptr_int), sizeof(ee_u8 *));
-	}
-	if (sizeof(ee_u32) != 4) {
-		ee_printf("ERROR! Please define ee_u32 to a 32b unsigned type! (%u)\n", sizeof(ee_u32));
-	}
-	p->portable_id=1;
+// 	if (sizeof(ee_ptr_int) != sizeof(ee_u8 *)) {
+// 		ee_printf("ERROR! Please define ee_ptr_int to a type that holds a pointer! (%u != %u)\n", sizeof(ee_ptr_int), sizeof(ee_u8 *));
+// 	}
+// 	if (sizeof(ee_u32) != 4) {
+// 		ee_printf("ERROR! Please define ee_u32 to a 32b unsigned type! (%u)\n", sizeof(ee_u32));
+// 	}
+// 	p->portable_id=1;
 }
 /* Function : portable_fini
 	Target specific final code
@@ -185,15 +185,15 @@ void portable_init(core_portable *p, int *argc, char *argv[])
 void portable_fini(core_portable *p)
 {
 	 //
-	CORE_TICKS total_time=get_time();
+	// CORE_TICKS total_time=get_time();
 		
-	float Cycles_Per_Instruction = ((float) total_time)/((float) INSNC[2]);	
-	float CoreMark_Per_MHZ= ((float)  ( ITERATIONS*1000000) ) /((float) total_time);
-	float CoreMark = CoreMark_Per_MHZ * MHZ;
-	ee_printf("Cycles_Per_Instruction: %f\n",Cycles_Per_Instruction);		
-	ee_printf("CoreMark 1.0 : %f\n",CoreMark);
-	ee_printf("CoreMark/MHz : %f\n",CoreMark_Per_MHZ);
+	// float Cycles_Per_Instruction = ((float) total_time)/((float) INSNC[2]);	
+	// float CoreMark_Per_MHZ= ((float)  ( ITERATIONS*1000000) ) /((float) total_time);
+	// float CoreMark = CoreMark_Per_MHZ * MHZ;
+	// ee_printf("Cycles_Per_Instruction: %f\n",Cycles_Per_Instruction);		
+	// ee_printf("CoreMark 1.0 : %f\n",CoreMark);
+	// ee_printf("CoreMark/MHz : %f\n",CoreMark_Per_MHZ);
     
-	ee_printf("FINISH\n");
+	// ee_printf("FINISH\n");
 
 }
