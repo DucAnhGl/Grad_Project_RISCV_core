@@ -29,7 +29,7 @@ module lsu_v2 (
     logic [7:0]  ram_0_rdata, ram_1_rdata, ram_2_rdata, ram_3_rdata,
                  ram_rdata_lbyte_pre_sgn_ext;
     logic [15:0] ram_rdata_lhword_pre_sgn_ext;
-    logic [12:0] ram_addr;
+    logic [13:0] ram_addr;
     logic [2:0]  input_mem_addr;
     logic [3:0]  output_mem_addr;
     logic [31:0] ram_rdata_lbyte,
@@ -44,7 +44,7 @@ module lsu_v2 (
 
 
 //  Addresses to pass into memory blocks
-    assign ram_addr        = lsu_addr_i[14:2];
+    assign ram_addr        = lsu_addr_i[15:2];
     assign input_mem_addr  = lsu_addr_i[2:0];
     assign output_mem_addr = lsu_addr_i[3:0];
 
@@ -62,11 +62,12 @@ module lsu_v2 (
 
 /////////////// Address decoder for selection between input, output or data memory //////////////////
     always @(*) begin
-        case ({lsu_addr_i[15], lsu_addr_i[12]})
-            2'b00, 2'b01: cs = 3'b001; // Select Data-mem
-            2'b10       : cs = 3'b010; // Select Output-mem
-            2'b11       : cs = 3'b100; // Select Input-mem
-            default     : cs = 3'b000; 
+        case (lsu_addr_i[17:16])
+            2'b00  : cs = 3'b000; // Select nothing
+            2'b01  : cs = 3'b001; // Select Data-mem
+            2'b10  : cs = 3'b010; // Select Output-mem
+            2'b11  : cs = 3'b100; // Select Input-mem
+            default: cs = 3'b000; // Select nothing
         endcase
     end
 
@@ -156,7 +157,7 @@ module lsu_v2 (
 
 /////////////// Memory blocks banking //////////////////
 //  RAM initialization
-    ram8x8k data_ram_0 (
+    ram8x16k data_ram_0 (
         .clk_i   (clk_i),       
         .wren_i  (ram_0_wren),
         .addr_i  (ram_addr),
@@ -164,8 +165,7 @@ module lsu_v2 (
         .rdata_o (ram_0_rdata)
     );
 
-
-    ram8x8k data_ram_1 (
+    ram8x16k data_ram_1 (
         .clk_i   (clk_i),       
         .wren_i  (ram_1_wren),
         .addr_i  (ram_addr),
@@ -173,7 +173,7 @@ module lsu_v2 (
         .rdata_o (ram_1_rdata)
     );
 
-    ram8x8k data_ram_2 (
+    ram8x16k data_ram_2 (
         .clk_i   (clk_i),       
         .wren_i  (ram_2_wren),
         .addr_i  (ram_addr),
@@ -181,13 +181,20 @@ module lsu_v2 (
         .rdata_o (ram_2_rdata)
     );
 
-    ram8x8k data_ram_3 (
+    ram8x16k data_ram_3 (
         .clk_i   (clk_i),       
         .wren_i  (ram_3_wren),
         .addr_i  (ram_addr),
         .wdata_i (st_data_i[31:24]),
         .rdata_o (ram_3_rdata)
     );
+
+    initial begin
+        $readmemh("../02_sim/dmem/ram0.mem",lsu_v2.data_ram_0.data_mem);
+        $readmemh("../02_sim/dmem/ram1.mem",lsu_v2.data_ram_1.data_mem);
+        $readmemh("../02_sim/dmem/ram2.mem",lsu_v2.data_ram_2.data_mem);
+        $readmemh("../02_sim/dmem/ram3.mem",lsu_v2.data_ram_3.data_mem);
+    end
 
 /////////////// Load-store for output buffers //////////////////
 //  Store

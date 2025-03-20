@@ -1,13 +1,13 @@
-module ram8x8k (
+module ram8x16k (
     input clk_i, wren_i,
-    input [12:0] addr_i, // Address for read and write
+    input [13:0] addr_i, // Address for read and write
     input [7:0] wdata_i, // Data to store into memory
     
     output [7:0] rdata_o // Data read out of memory
 );
 
     //Memory array creation
-    logic [7:0] data_mem [0:8191];
+    logic [7:0] data_mem [0:16383];
 
     //Synchronous write, synchronous enable
     always @(posedge clk_i) begin

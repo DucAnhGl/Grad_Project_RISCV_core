@@ -36,7 +36,7 @@
 	Define to 1 if the platform has stdio.h.
 */
 #ifndef HAS_STDIO
-#define HAS_STDIO 1
+#define HAS_STDIO 0
 #endif
 /* Configuration : HAS_PRINTF
 	Define to 1 if the platform has stdio.h and implements the printf function.
@@ -166,7 +166,7 @@ typedef size_t ee_size_t;
 	1 - platform does not support returning a value from main
 */
 #ifndef MAIN_HAS_NORETURN
-#define MAIN_HAS_NORETURN 0
+#define MAIN_HAS_NORETURN 1
 #endif
 
 /* Variable : default_num_contexts
