@@ -4,7 +4,7 @@ ENTRY(_mystart)
 
 MEMORY
 {
-    IMEM (rx) : ORIGIN = 0x00000000, LENGTH = 64k   /* 32k size for instruction memory */
+    IMEM (rx) : ORIGIN = 0x00000000, LENGTH = 64k   /* 64k size for instruction memory */
     DMEM (rwx) : ORIGIN = 0x00010000, LENGTH = 64k   /* 64k size for data memory */
 }
 
@@ -13,7 +13,8 @@ SECTIONS
     . = 0x00000000;
     .startup : 
     {
-        /home/linh/Documents/GitHub/Grad_Project_RISCV_core/pipelined_5_stage/02_sim/bench/RV32IM-CoreMark/build/init_asm.o(.text)
+        /*/home/linh/Documents/GitHub/Grad_Project_RISCV_core/pipelined_5_stage/02_sim/bench/RV32IM-CoreMark/build/init_asm.o(.text)*/
+        /home/ducanh/Documents/GitHub/Grad_Project_RISCV_core/pipelined_5_stage/02_sim/bench/RV32IM-CoreMark/build/init_asm.o(.text)
     } > IMEM
 
 
