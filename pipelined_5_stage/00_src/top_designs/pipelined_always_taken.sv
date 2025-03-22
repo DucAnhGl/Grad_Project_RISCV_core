@@ -19,7 +19,7 @@ module pipelined_always_taken (
     output logic [31:0] io_lcd_o    // Output for driving the LCD register
 ); 
 
-localparam INDEX_WIDTH = 12;
+localparam INDEX_WIDTH = 9;
 
 /*==============================   IF SIGNALS   ==============================*/
     logic [31:0] IF_pc, IF_pcplus4, IF_instr, IF_pcnext, IF_btb_rd_target;

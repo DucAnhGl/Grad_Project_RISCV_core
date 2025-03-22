@@ -12,9 +12,12 @@ loop:
     blt     t0, t1, loop       # If t0 == t1, branch back to loop (this would be the first-time bias)
 
     #j       loop                # Jump back to loop if not branch (continuing normally)
-end: 
-    nop
-    nop
-    nop
-    nop
-    nop
+nop
+nop
+nop
+nop
+nop
+nop
+
+end:
+    j end

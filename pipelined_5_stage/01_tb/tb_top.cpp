@@ -9,7 +9,7 @@
 #include <verilated_fst_c.h>
 #include "Vtop.h"
 
-#define MAX_SIM_TIME 10000000000
+#define MAX_SIM_TIME 20000000
 vluint64_t sim_time = 0;
 
 vluint64_t br_instr_counter = 0;
@@ -37,7 +37,7 @@ int main(int argc, char** argv, char** env) {
         dut_reset(dut, sim_time);         // Call reset function
         dut->clk_i ^= 1;
         dut->eval();
-        // m_trace->dump(sim_time);
+        //m_trace->dump(sim_time);
 
         //counting values update at every posedge clk:
         if (dut->clk_i == 1) {

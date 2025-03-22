@@ -90,5 +90,5 @@ nop
 nop
 nop
 nop
-#end:
-#    j end                  # Jump to itself, creating an infinite loop
+end:
+    j end                  # Jump to itself, creating an infinite loop

@@ -26,4 +26,5 @@ nop
 nop
 nop
 
-#    j halt              # Infinite loop to end the program
+stop:
+    j stop

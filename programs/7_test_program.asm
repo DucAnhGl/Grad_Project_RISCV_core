@@ -32,3 +32,6 @@ nop
 nop
 nop
 nop
+
+end:
+    j end

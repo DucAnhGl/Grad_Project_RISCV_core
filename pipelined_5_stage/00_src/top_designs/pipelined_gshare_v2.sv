@@ -20,7 +20,7 @@ module pipelined_gshare_v2 (
 ); 
 
 localparam INDEX_WIDTH = 12;
-localparam HISTORY_WIDTH = 4;
+localparam HISTORY_WIDTH = 12;
 
 /*==============================   IF SIGNALS   ==============================*/
     logic [31:0] IF_pc, IF_pcplus4, IF_instr, IF_pcnext, IF_btb_rd_target;
@@ -453,7 +453,7 @@ lsu_v2 inst_lsu (
     .io_hex2_o  (io_hex2_o),    
     .io_hex3_o  (io_hex3_o),    
     .io_hex4_o  (io_hex4_o),    
-    .io_hex5_o  (io_hex5_o),    
+    .io_hex5_o  (io_hex5_o)    
 //    .io_hex6_o  (io_hex6_o),    
 //    .io_hex7_o  (io_hex7_o)    
 );

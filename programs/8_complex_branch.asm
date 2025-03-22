@@ -133,4 +133,6 @@ predictable_next:
     nop
     nop
     nop
-    
+
+end:
+    j end

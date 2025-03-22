@@ -3,7 +3,7 @@ Signals with "EXMEM" prefix indicates that they come from the branch commit stag
 which is in default the MEM stage.
 */
 
-module agree_predictor #(
+module agree_predictor_v2 #(
     INDEX_WIDTH, 
     HISTORY_WIDTH
 ) (
@@ -96,6 +96,7 @@ module agree_predictor #(
         .set_data    ({EXMEM_ghr_data_i[(HISTORY_WIDTH-2):0],EXMEM_br_decision_i}),
         .set_en      (EXMEM_is_jmp_i & (EXMEM_prediction_i ^ EXMEM_br_decision_i))
     );
+    
 
     //Next PC selection decoder: 
     always @(*) begin

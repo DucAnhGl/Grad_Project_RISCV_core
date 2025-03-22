@@ -1,4 +1,4 @@
-module pipelined_agree (
+module pipelined_agree_v2 (
     input  logic        clk_i,      // Global clock, active on the rising edge
     input  logic        rst_ni,     // Global low active reset
     input  logic [31:0] io_sw_i,    // Input for switches
@@ -20,7 +20,7 @@ module pipelined_agree (
 ); 
 
 localparam INDEX_WIDTH = 12;
-localparam HISTORY_WIDTH = 6;
+localparam HISTORY_WIDTH = 2;
 
 /*==============================   IF SIGNALS   ==============================*/
     logic [31:0] IF_pc, IF_pcplus4, IF_instr, IF_pcnext, IF_btb_rd_target;
@@ -112,7 +112,7 @@ localparam HISTORY_WIDTH = 6;
     );
 
     // Branch predictor
-    agree_predictor #(
+    agree_predictor_v2 #(
         .INDEX_WIDTH   (INDEX_WIDTH),
         .HISTORY_WIDTH (HISTORY_WIDTH)
     ) inst_predictor (

@@ -165,6 +165,6 @@ nop
 nop
 nop
 
-# Infinite loop to "exit" the program
-# end:
-#     j end                  # Jump to itself, creating an infinite loop
+
+end:
+    j end                  # Jump to itself, creating an infinite loop

@@ -31,6 +31,10 @@ else ifeq ($(PREDICTOR), 5)
     MACRO = GSHAREv2
     PREDICTOR_NAME = "GSHAREv2"
     FILELIST = filelist/filelist5
+else ifeq ($(PREDICTOR), 6)
+    MACRO = AGREEv2
+    PREDICTOR_NAME = "AGREEv2"
+    FILELIST = filelist/filelist6
 else
     $(error Invalid PREDICTOR: $(PREDICTOR). Choose from 1 (ALWAYS_TAKEN), 2 (TWO_BIT), 3 (GSHARE), 4 (AGREE))
 endif
@@ -120,7 +124,7 @@ clean:
 
 .PHONY: all
 all:
-	make clean
+#	make clean
 	@echo "Using Predictor: $(PREDICTOR_NAME)"
 	make build
 	make sim
