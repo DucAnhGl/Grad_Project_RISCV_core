@@ -7,15 +7,15 @@ module pipelined_always_taken (
     output logic [31:0] pc_debug_o, // Debug program counter
     output logic        insn_vld_o, // Instruction valid
     output logic [31:0] io_ledr_o,  // Output for driving red LEDs
-    output logic [31:0] io_ledg_o,  // Output for driving green LEDs
+//    output logic [31:0] io_ledg_o,  // Output for driving green LEDs
     output logic [6:0]  io_hex0_o,  // Output for driving 7-segment LED display
                         io_hex1_o,  // Output for driving 7-segment LED display
                         io_hex2_o,  // Output for driving 7-segment LED display
                         io_hex3_o,  // Output for driving 7-segment LED display
                         io_hex4_o,  // Output for driving 7-segment LED display
                         io_hex5_o,  // Output for driving 7-segment LED display
-                        io_hex6_o,  // Output for driving 7-segment LED display
-                        io_hex7_o,  // Output for driving 7-segment LED display
+//                        io_hex6_o,  // Output for driving 7-segment LED display
+//                        io_hex7_o,  // Output for driving 7-segment LED display
     output logic [31:0] io_lcd_o    // Output for driving the LCD register
 ); 
 
@@ -399,7 +399,7 @@ always @(posedge clk_i or negedge rst_ni) begin
 end
 
 /*==============================   MEM STAGE   ==============================*/
-lsu inst_lsu (
+lsu_v2 inst_lsu (
     .clk_i      (clk_i),      
     .rst_ni     (rst_ni),    
     .lsu_wren_i (EXMEM_mem_wren), 
@@ -412,16 +412,16 @@ lsu inst_lsu (
 
     .ld_data_o  (MEM_lsu_rdata),  
     .io_lcd_o   (io_lcd_o),    
-    .io_ledg_o  (io_ledg_o),    
+//    .io_ledg_o  (io_ledg_o),    
     .io_ledr_o  (io_ledr_o),    
     .io_hex0_o  (io_hex0_o),    
     .io_hex1_o  (io_hex1_o),    
     .io_hex2_o  (io_hex2_o),    
     .io_hex3_o  (io_hex3_o),    
     .io_hex4_o  (io_hex4_o),    
-    .io_hex5_o  (io_hex5_o),    
-    .io_hex6_o  (io_hex6_o),    
-    .io_hex7_o  (io_hex7_o)      
+    .io_hex5_o  (io_hex5_o)    
+//    .io_hex6_o  (io_hex6_o),    
+//    .io_hex7_o  (io_hex7_o)      
 );
 
 assign EXMEM_is_jmp = EXMEM_is_br || (EXMEM_is_uncbr==2'b10);

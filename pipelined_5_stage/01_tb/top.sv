@@ -22,15 +22,15 @@ module top
     .pc_debug_o (),  // Debug program counter
     .insn_vld_o (),  // Instruction valid
     .io_ledr_o  (),  // Output for driving red LEDs
-    .io_ledg_o  (),  // Output for driving green LEDs
+//    .io_ledg_o  (),  // Output for driving green LEDs
     .io_hex0_o  (),  // Output for driving 7-segment LED display
     .io_hex1_o  (),  // Output for driving 7-segment LED display
     .io_hex2_o  (),  // Output for driving 7-segment LED display
     .io_hex3_o  (),  // Output for driving 7-segment LED display
     .io_hex4_o  (),  // Output for driving 7-segment LED display
     .io_hex5_o  (),  // Output for driving 7-segment LED display
-    .io_hex6_o  (),  // Output for driving 7-segment LED display
-    .io_hex7_o  (),  // Output for driving 7-segment LED display
+//    .io_hex6_o  (),  // Output for driving 7-segment LED display
+//    .io_hex7_o  (),  // Output for driving 7-segment LED display
     .io_lcd_o   () // Output for driving the LCD register
   );
 
@@ -78,15 +78,15 @@ module top
     .pc_debug_o (),  // Debug program counter
     .insn_vld_o (),  // Instruction valid
     .io_ledr_o  (),  // Output for driving red LEDs
-    .io_ledg_o  (),  // Output for driving green LEDs
+//    .io_ledg_o  (),  // Output for driving green LEDs
     .io_hex0_o  (),  // Output for driving 7-segment LED display
     .io_hex1_o  (),  // Output for driving 7-segment LED display
     .io_hex2_o  (),  // Output for driving 7-segment LED display
     .io_hex3_o  (),  // Output for driving 7-segment LED display
     .io_hex4_o  (),  // Output for driving 7-segment LED display
     .io_hex5_o  (),  // Output for driving 7-segment LED display
-    .io_hex6_o  (),  // Output for driving 7-segment LED display
-    .io_hex7_o  (),  // Output for driving 7-segment LED display
+//    .io_hex6_o  (),  // Output for driving 7-segment LED display
+//    .io_hex7_o  (),  // Output for driving 7-segment LED display
     .io_lcd_o   () // Output for driving the LCD register
   );
 
@@ -106,15 +106,15 @@ module top
     .pc_debug_o (),  // Debug program counter
     .insn_vld_o (),  // Instruction valid
     .io_ledr_o  (),  // Output for driving red LEDs
-    .io_ledg_o  (),  // Output for driving green LEDs
+//    .io_ledg_o  (),  // Output for driving green LEDs
     .io_hex0_o  (),  // Output for driving 7-segment LED display
     .io_hex1_o  (),  // Output for driving 7-segment LED display
     .io_hex2_o  (),  // Output for driving 7-segment LED display
     .io_hex3_o  (),  // Output for driving 7-segment LED display
     .io_hex4_o  (),  // Output for driving 7-segment LED display
     .io_hex5_o  (),  // Output for driving 7-segment LED display
-    .io_hex6_o  (),  // Output for driving 7-segment LED display
-    .io_hex7_o  (),  // Output for driving 7-segment LED display
+//    .io_hex6_o  (),  // Output for driving 7-segment LED display
+//    .io_hex7_o  (),  // Output for driving 7-segment LED display
     .io_lcd_o   () // Output for driving the LCD register
   );
 
@@ -134,15 +134,15 @@ module top
     .pc_debug_o (),  // Debug program counter
     .insn_vld_o (),  // Instruction valid
     .io_ledr_o  (),  // Output for driving red LEDs
-    .io_ledg_o  (),  // Output for driving green LEDs
+//    .io_ledg_o  (),  // Output for driving green LEDs
     .io_hex0_o  (),  // Output for driving 7-segment LED display
     .io_hex1_o  (),  // Output for driving 7-segment LED display
     .io_hex2_o  (),  // Output for driving 7-segment LED display
     .io_hex3_o  (),  // Output for driving 7-segment LED display
     .io_hex4_o  (),  // Output for driving 7-segment LED display
     .io_hex5_o  (),  // Output for driving 7-segment LED display
-    .io_hex6_o  (),  // Output for driving 7-segment LED display
-    .io_hex7_o  (),  // Output for driving 7-segment LED display
+//    .io_hex6_o  (),  // Output for driving 7-segment LED display
+//    .io_hex7_o  (),  // Output for driving 7-segment LED display
     .io_lcd_o   () // Output for driving the LCD register
   );
 
