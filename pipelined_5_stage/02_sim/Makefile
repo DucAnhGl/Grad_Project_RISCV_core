@@ -119,7 +119,8 @@ clean:
 	@echo "<> CLEAN ---------------------"
 
 .PHONY: all
-all: 
+all:
+	make clean
 	@echo "Using Predictor: $(PREDICTOR_NAME)"
 	make build
 	make sim
@@ -162,6 +163,9 @@ PADSIZE		 = 128k
 else ifeq ($(PROGRAM), coremark)
 TARGET       = bench/RV32IM-CoreMark/build/coremark
 PADSIZE		 = 128k
+else ifeq ($(PROGRAM), test2)
+TARGET       = bench/test2/test2
+PADSIZE		 = 128k
 endif
 
 .PHONY: hexc
@@ -182,6 +186,20 @@ ifeq ($(PROGRAM), test)
 	make ram
 else ifeq ($(PROGRAM), coremark)
 	$(MAKE) -C bench/RV32IM-CoreMark
+	make padding
+	make hex1
+	make hex4
+	make dump
+	make file
+	make ram
+else ifeq ($(PROGRAM), test2)
+	$(RISCV_PREFIX)as -o startup.o startup.S -march=rv32i -mabi=ilp32
+	$(RISCV_PREFIX)gcc -nostartfiles -O2 \
+		-o bench/test2/test2.elf \
+		-T linker.lds \
+		bench/test2/test2.c \
+		startup.o
+	$(RISCV_PREFIX)objcopy -O binary bench/test2/test2.elf bench/test2/test2.bin
 	make padding
 	make hex1
 	make hex4
