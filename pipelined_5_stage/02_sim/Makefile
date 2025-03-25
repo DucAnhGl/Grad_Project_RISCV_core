@@ -120,7 +120,7 @@ clean:
 
 .PHONY: all
 all:
-	make clean
+#	make clean
 	@echo "Using Predictor: $(PREDICTOR_NAME)"
 	make build
 	make sim

@@ -9,7 +9,7 @@
 #include <verilated_fst_c.h>
 #include "Vtop.h"
 
-#define MAX_SIM_TIME 10000000000
+#define MAX_SIM_TIME 10000000
 vluint64_t sim_time = 0;
 
 vluint64_t br_instr_counter = 0;
