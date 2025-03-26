@@ -6,7 +6,14 @@
 #include <iostream>
 #include <iomanip>
 #include <verilated.h>
-#include <verilated_fst_c.h>
+
+#define ENABLE_TRACE 0
+
+#if ENABLE_TRACE
+    #include <verilated_fst_c.h>
+#endif
+
+
 #include "Vtop.h"
 
 #define MAX_SIM_TIME 20000000
@@ -28,29 +35,26 @@ int main(int argc, char** argv, char** env) {
     Verilated::commandArgs(argc, argv);
     Vtop *dut = new Vtop;
 
-    // Verilated::traceEverOn(true);
-    // VerilatedFstC *m_trace = new VerilatedFstC;
-    // dut->trace(m_trace, 4);
-    // m_trace->open("wave.fst");
+    #if ENABLE_TRACE
+        Verilated::traceEverOn(true);
+        VerilatedFstC *m_trace = new VerilatedFstC;
+        dut->trace(m_trace, 4);
+        m_trace->open("wave.fst");
+    #endif
 
-    while ((dut->instr != 0x0000006F) && (sim_time < MAX_SIM_TIME)) { // 0x0000006F = jal x0, 0
-        dut_reset(dut, sim_time);         // Call reset function
+    while ((dut->instr != 0x0000006F) && (sim_time < MAX_SIM_TIME)) {
+        dut_reset(dut, sim_time);
         dut->clk_i ^= 1;
         dut->eval();
-        //m_trace->dump(sim_time);
 
-        //counting values update at every posedge clk:
+        #if ENABLE_TRACE
+            m_trace->dump(sim_time);
+        #endif
+
         if (dut->clk_i == 1) {
-
-        // Check instruction is a branch and increment counter
-        if (dut->br_instr == 1) br_instr_counter++;
-
-        // Check if branch misprediction occurred and increment the counter
-        if (dut->br_misses == 1) br_misses_counter++;
-
-        //increment cycle counter
-        sim_cycle = sim_cycle + 1;
-
+            if (dut->br_instr == 1) br_instr_counter++;
+            if (dut->br_misses == 1) br_misses_counter++;
+            sim_cycle++;
         }
 
         sim_time++;
@@ -63,13 +67,11 @@ int main(int argc, char** argv, char** env) {
 
     double cycle_penalty_percent = 0.0;
     if (br_instr_counter > 0) {
-        cycle_penalty_percent = ((double)br_misses_counter*2 / (double)sim_cycle) * 100.0;
+        cycle_penalty_percent = ((double)br_misses_counter * 2 / (double)sim_cycle) * 100.0;
     }
 
-    // Output the results to the terminal
     std::cout << std::left;
     std::cout << "============================================================="                   << std::endl;
-
     std::cout << "                \033[32mBranch Prediction Statistics\033[0m"                     << std::endl;
     std::cout << "-------------------------------------------------------------"                   << std::endl;
     std::cout << std::setw(30) << "Total Branch Instructions: "    << br_instr_counter             << std::endl;
@@ -77,12 +79,15 @@ int main(int argc, char** argv, char** env) {
     std::cout << std::setw(30) << "Percentage predicted: "         << 100 - penalty_percent << "%" << std::endl;
     std::cout << std::endl;
     std::cout << std::setw(30) << "Total Cycles: "                 << sim_cycle                    << std::endl;
-    std::cout << std::setw(30) << "Cycle penalties: "              << br_misses_counter*2          << std::endl;
+    std::cout << std::setw(30) << "Cycle penalties: "              << br_misses_counter * 2        << std::endl;
     std::cout << std::setw(30) << "Cycle penalty percentage: "     << cycle_penalty_percent << "%" << std::endl;
-
     std::cout << "============================================================="                   << std::endl;
 
-    // m_trace->close();
+    #if ENABLE_TRACE
+        m_trace->close();
+        delete m_trace;
+    #endif
+
     delete dut;
 
     std::cout << std::endl;

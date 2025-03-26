@@ -116,20 +116,21 @@ wave: wave.fst
 clean:
 	@rm -rf obj_dir
 	@rm -f *.fst
-	@rm -f asm_output/output.asm asm_output/out.o startup.o
+	@rm -f asm_output/*.bin asm_output/*.dump asm_output/*.hex asm_output/*.o
 	@rm -f bench/test/*.o bench/test/*.bin bench/test/*.elf bench/test/*.dump bench/test/*.hex
 	@rm -rf bench/RV32IM-CoreMark/build/*
-	@rm -f $(RAM_FILES) $(DATA_MEM_FILE) instruction_mem.mem instruction_mem_padded.mem
+	@rm -f $(RAM_FILES) $(DATA_MEM_FILE) instruction_mem.mem instruction_mem_padded.mem startup.o
 	@echo "<> CLEAN ---------------------"
 
 .PHONY: all
 all:
-#	make clean
 	@echo "Using Predictor: $(PREDICTOR_NAME)"
 	make build
 	make sim
 
 PROGRAM ?= 1
+TARGET ?= asm_output/out
+PADSIZE ?= 128k
 
 .PHONY: hex
 hex:
@@ -155,21 +156,21 @@ else
 	$(error Invalid PROGRAM: $(PROGRAM). Choose from 1 to 9)
 endif
 
-	@riscv32-unknown-elf-objcopy -O verilog asm_output/out.o instruction_mem.mem
-	@riscv32-unknown-elf-objdump -d asm_output/out.o > asm_output/output.asm
-	@echo "00 00 00 00" >> instruction_mem.mem
-	@echo "Generated hex for Program: $(PROGRAM)"
+	$(RISCV_PREFIX)objcopy -O verilog asm_output/out.o asm_output/out.bin
+	make padding
+	make hex1
+	make hex4
+	$(RISCV_PREFIX)objdump -D asm_output/out.o > asm_output/out.dump
+	make file
+	make ram
 
 
 ifeq ($(PROGRAM), test)
 TARGET       = bench/test/main
-PADSIZE		 = 128k
 else ifeq ($(PROGRAM), coremark)
 TARGET       = bench/RV32IM-CoreMark/build/coremark
-PADSIZE		 = 128k
 else ifeq ($(PROGRAM), test2)
 TARGET       = bench/test2/test2
-PADSIZE		 = 128k
 endif
 
 .PHONY: hexc
@@ -182,20 +183,8 @@ ifeq ($(PROGRAM), test)
 		bench/test/main.c bench/test/simrv.c bench/test/acker.c bench/test/fib.c bench/test/nqueen.c bench/test/qsort.c \
 		startup.o
 	$(RISCV_PREFIX)objcopy -O binary bench/test/main.elf bench/test/main.bin
-	make padding
-	make hex1
-	make hex4
-	make dump
-	make file
-	make ram
 else ifeq ($(PROGRAM), coremark)
 	$(MAKE) -C bench/RV32IM-CoreMark
-	make padding
-	make hex1
-	make hex4
-	make dump
-	make file
-	make ram
 else ifeq ($(PROGRAM), test2)
 	$(RISCV_PREFIX)as -o startup.o startup.S -march=rv32i -mabi=ilp32
 	$(RISCV_PREFIX)gcc -nostartfiles -O2 \
@@ -204,16 +193,15 @@ else ifeq ($(PROGRAM), test2)
 		bench/test2/test2.c \
 		startup.o
 	$(RISCV_PREFIX)objcopy -O binary bench/test2/test2.elf bench/test2/test2.bin
+else
+	$(error Invalid PROGRAM: $(PROGRAM). Choose from 1 to 7)
+endif
 	make padding
 	make hex1
 	make hex4
 	make dump
 	make file
 	make ram
-else
-	$(error Invalid PROGRAM: $(PROGRAM). Choose from 1 to 7)
-endif
-	
 
 ###############################################################################
 padding:
