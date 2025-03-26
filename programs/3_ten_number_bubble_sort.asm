@@ -1,6 +1,7 @@
 # Array values: [10, 9, 8, 7, 6, 5, 4, 3, 2, 1] are stored in registers.
 # Registers t0 to t6, and a0 to a3 are used for array elements.
-
+.global main
+main:
     li t0, 10       # array[0]
     li t1, 9        # array[1]
     li t2, 8        # array[2]

@@ -5,7 +5,7 @@
 # Copyright (c) 2022 Hai Cao Xuan
 #*******************************************************************************
 RISCV_PREFIX = /opt/riscv/bin/riscv32-unknown-elf-
-CCFLAGS      = -O2 -march=rv32i -mabi=ilp32
+CCFLAGS      = -march=rv32i -mabi=ilp32
 
 .SUFFIXES: .o .c .S
 
@@ -134,33 +134,37 @@ PADSIZE ?= 128k
 
 .PHONY: hex
 hex:
+	$(RISCV_PREFIX)as -o startup.o startup.S $(CCFLAGS)
 ifeq ($(PROGRAM), 1)
-	$(RISCV_PREFIX)as -o asm_output/out.o ../../programs/1_agree_friendly.asm
+	$(RISCV_PREFIX)as -o asm_output/out.o ../../programs/1_agree_friendly.asm $(CCFLAGS)
 else ifeq ($(PROGRAM), 2)
-	$(RISCV_PREFIX)as -o asm_output/out.o ../../programs/2_bubble_sort.asm
+	$(RISCV_PREFIX)as -o asm_output/out.o ../../programs/2_bubble_sort.asm $(CCFLAGS)
 else ifeq ($(PROGRAM), 3)
-	$(RISCV_PREFIX)as -o asm_output/out.o ../../programs/3_ten_number_bubble_sort.asm
+	$(RISCV_PREFIX)as -o asm_output/out.o ../../programs/3_ten_number_bubble_sort.asm $(CCFLAGS)
 else ifeq ($(PROGRAM), 4)
-	$(RISCV_PREFIX)as -o asm_output/out.o ../../programs/4_gshare_friendly.asm
+	$(RISCV_PREFIX)as -o asm_output/out.o ../../programs/4_gshare_friendly.asm $(CCFLAGS)
 else ifeq ($(PROGRAM), 5)
-	$(RISCV_PREFIX)as -o asm_output/out.o ../../programs/5_fibonacci.asm
+	$(RISCV_PREFIX)as -o asm_output/out.o ../../programs/5_fibonacci.asm $(CCFLAGS)
 else ifeq ($(PROGRAM), 6)
-	$(RISCV_PREFIX)as -o asm_output/out.o ../../programs/6_delay_function.asm
+	$(RISCV_PREFIX)as -o asm_output/out.o ../../programs/6_delay_function.asm $(CCFLAGS)
 else ifeq ($(PROGRAM), 7)
-	$(RISCV_PREFIX)as -o asm_output/out.o ../../programs/7_test_program.asm
+	$(RISCV_PREFIX)as -o asm_output/out.o ../../programs/7_test_program.asm $(CCFLAGS)
 else ifeq ($(PROGRAM), 8)
-	$(RISCV_PREFIX)as -o asm_output/out.o ../../programs/8_complex_branch.asm
+	$(RISCV_PREFIX)as -o asm_output/out.o ../../programs/8_complex_branch.asm $(CCFLAGS)
 else ifeq ($(PROGRAM), 9)
-	$(RISCV_PREFIX)as -o asm_output/out.o ../../programs/9_lsu_v2_test.asm
+	$(RISCV_PREFIX)as -o asm_output/out.o ../../programs/9_lsu_v2_test.asm $(CCFLAGS)
 else
 	$(error Invalid PROGRAM: $(PROGRAM). Choose from 1 to 9)
 endif
-
-	$(RISCV_PREFIX)objcopy -O verilog asm_output/out.o asm_output/out.bin
+	$(RISCV_PREFIX)gcc -nostartfiles -O2 \
+		-o asm_output/out.elf \
+		-T linker.lds \
+		asm_output/out.o startup.o
+	$(RISCV_PREFIX)objcopy -O verilog asm_output/out.elf asm_output/out.bin
 	make padding
 	make hex1
 	make hex4
-	$(RISCV_PREFIX)objdump -D asm_output/out.o > asm_output/out.dump
+	make dump
 	make file
 	make ram
 

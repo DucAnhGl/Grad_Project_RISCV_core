@@ -1,4 +1,6 @@
 # Initialize registers
+.global main
+main:
     li t0, 0         # t0 = loop counter
     li t1, 64        # t1 = loop limit
     li t2, 0xAAAA    # t2 = alternating pattern (0b1010101010101010)

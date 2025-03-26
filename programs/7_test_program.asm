@@ -1,3 +1,5 @@
+.global main
+main:
     li t0, 0         # t0 = loop counter
     li t1, 10        # t1 = loop limit
     li t2, 0xA5A5    # t2 = alternating pattern (0b1010010110100101)

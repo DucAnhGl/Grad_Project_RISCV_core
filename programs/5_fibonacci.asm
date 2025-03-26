@@ -1,4 +1,5 @@
-_start:
+.global main
+main:
     li a0, 40          # Calculate Fibonacci of 10 (replace 10 with desired number)
     li t0, 0            # Initialize t0 to store fib(0)
     li t1, 1            # Initialize t1 to store fib(1)
@@ -19,7 +20,6 @@ end:
     mv a0, t1           # Result of fib(n) is now in a0
 
     # Exit program (simulate exit in bare-metal by looping indefinitely)
-halt:
 nop
 nop
 nop

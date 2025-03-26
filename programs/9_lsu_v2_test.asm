@@ -1,4 +1,5 @@
-
+.global main
+main:
 li  x1 , 0xDEADBEEF # load test value into register
 li  x2 , 0x20000    # address of LEDR
 li  x3 , 0x20004    # address of HEX0

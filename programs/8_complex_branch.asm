@@ -1,4 +1,6 @@
 # Initialize some registers
+.global main
+main:
     li t0, 0       # t0 = loop counter
     li t1, 50      # t1 = loop limit
     li t2, 0x01    # t2 = bit toggle value

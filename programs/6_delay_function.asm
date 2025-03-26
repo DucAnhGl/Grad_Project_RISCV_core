@@ -1,3 +1,5 @@
+.global main
+main:
     addi x3, x0, 10
 
 loop:

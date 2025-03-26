@@ -1,7 +1,8 @@
 # Array values: [5, 3, 4, 1, 2] are loaded into registers directly.
 # Array is stored in registers t0 to t4 for simplicity.
 # Registers t0-t4 represent the array elements array[0] to array[4].
-
+.global main
+main:
     li t0, 5        # array[0]
     li t1, 3        # array[1]
     li t2, 4        # array[2]
