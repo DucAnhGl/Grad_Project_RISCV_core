@@ -458,7 +458,7 @@ lsu_v2 inst_lsu (
 //    .io_hex7_o  (io_hex7_o)    
 );
 
-assign EXMEM_is_jmp = EXMEM_is_br/* || (EXMEM_is_uncbr==2'b10)*/;
+assign EXMEM_is_jmp = EXMEM_is_br || (EXMEM_is_uncbr==2'b10);
 
 //MEMWB pipeline register: async rstn
 always @(posedge clk_i or negedge rst_ni) begin

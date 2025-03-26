@@ -438,6 +438,6 @@ for (i = 0; i < MULTITHREAD; i++)
     /* And last call any target specific code for finalizing */
     portable_fini(&(results[0].port));
         
-
+    while(1);
     return MAIN_RETURN_VAL;
 }

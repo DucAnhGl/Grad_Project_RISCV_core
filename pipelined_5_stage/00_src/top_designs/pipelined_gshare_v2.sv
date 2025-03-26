@@ -20,7 +20,7 @@ module pipelined_gshare_v2 (
 ); 
 
 localparam INDEX_WIDTH = 12;
-localparam HISTORY_WIDTH = 12;
+localparam HISTORY_WIDTH = 9;
 
 /*==============================   IF SIGNALS   ==============================*/
     logic [31:0] IF_pc, IF_pcplus4, IF_instr, IF_pcnext, IF_btb_rd_target;
@@ -458,7 +458,7 @@ lsu_v2 inst_lsu (
 //    .io_hex7_o  (io_hex7_o)    
 );
 
-assign EXMEM_is_jmp = EXMEM_is_br/* || (EXMEM_is_uncbr==2'b10)*/;
+assign EXMEM_is_jmp = EXMEM_is_br || (EXMEM_is_uncbr==2'b10);
 
 //MEMWB pipeline register: async rstn
 always @(posedge clk_i or negedge rst_ni) begin

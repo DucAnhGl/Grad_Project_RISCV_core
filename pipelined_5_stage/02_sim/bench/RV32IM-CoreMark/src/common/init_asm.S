@@ -39,7 +39,7 @@ _mystart:
 	add x30, x0, x0
 	add x31, x0, x0
 
-	li sp, 0xE000     # stack pointer 4KB
+	li sp, 0x1E000     # stack pointer 4KB
 	j      main       # jump to the main
 	nop
 

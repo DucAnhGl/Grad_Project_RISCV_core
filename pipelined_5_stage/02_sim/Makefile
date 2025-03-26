@@ -116,7 +116,7 @@ wave: wave.fst
 clean:
 	@rm -rf obj_dir
 	@rm -f *.fst
-	@rm -f asm_output/*.bin asm_output/*.dump asm_output/*.hex asm_output/*.o
+	@rm -f asm_output/*.bin asm_output/*.dump asm_output/*.hex asm_output/*.o asm_output/*.elf
 	@rm -f bench/test/*.o bench/test/*.bin bench/test/*.elf bench/test/*.dump bench/test/*.hex
 	@rm -rf bench/RV32IM-CoreMark/build/*
 	@rm -f $(RAM_FILES) $(DATA_MEM_FILE) instruction_mem.mem instruction_mem_padded.mem startup.o

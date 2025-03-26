@@ -120,7 +120,7 @@ module top
 
   assign br_misses = (pipelined_gshare_v2_inst.EXMEM_prediction ^ pipelined_gshare_v2_inst.EXMEM_true_br_decision) & pipelined_gshare_v2_inst.EXMEM_is_jmp;
   assign br_instr  = pipelined_gshare_v2_inst.EXMEM_is_jmp;
-  assign instr     = pipelined_gshare_v2_inst.IF_instr;
+  assign instr     = pipelined_gshare_v2_inst.IF_instr; 
 `endif
 
 `ifdef AGREE
