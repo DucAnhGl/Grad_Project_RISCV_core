@@ -1,5 +1,6 @@
+    nop
 _start:
-    li a0, 40          # Calculate Fibonacci of 10 (replace 10 with desired number)
+    li a0, 10          # Calculate Fibonacci of 10 (replace 10 with desired number)
     li t0, 0            # Initialize t0 to store fib(0)
     li t1, 1            # Initialize t1 to store fib(1)
     li t3, 1

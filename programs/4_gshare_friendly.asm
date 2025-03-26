@@ -1,3 +1,4 @@
+    nop
 # Initialize registers
     li t0, 0         # t0 = loop counter
     li t1, 64        # t1 = loop limit

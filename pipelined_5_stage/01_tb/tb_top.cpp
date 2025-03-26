@@ -28,16 +28,16 @@ int main(int argc, char** argv, char** env) {
     Verilated::commandArgs(argc, argv);
     Vtop *dut = new Vtop;
 
-    // Verilated::traceEverOn(true);
-    // VerilatedFstC *m_trace = new VerilatedFstC;
-    // dut->trace(m_trace, 4);
-    // m_trace->open("wave.fst");
+    Verilated::traceEverOn(true);
+    VerilatedFstC *m_trace = new VerilatedFstC;
+    dut->trace(m_trace, 4);
+    m_trace->open("wave.fst");
 
     while ((dut->instr != 0x0000006F) && (sim_time < MAX_SIM_TIME)) { // 0x0000006F = jal x0, 0
         dut_reset(dut, sim_time);         // Call reset function
         dut->clk_i ^= 1;
         dut->eval();
-        //m_trace->dump(sim_time);
+        m_trace->dump(sim_time);
 
         //counting values update at every posedge clk:
         if (dut->clk_i == 1) {
@@ -82,7 +82,7 @@ int main(int argc, char** argv, char** env) {
 
     std::cout << "============================================================="                   << std::endl;
 
-    // m_trace->close();
+    m_trace->close();
     delete dut;
 
     std::cout << std::endl;

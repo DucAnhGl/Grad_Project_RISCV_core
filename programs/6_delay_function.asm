@@ -1,3 +1,4 @@
+    nop
     addi x3, x0, 10
 
 loop:
