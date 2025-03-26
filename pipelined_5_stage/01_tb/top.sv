@@ -7,7 +7,8 @@ module top
 
   output logic        br_misses,
   output logic        br_instr,
-  output logic [31:0] instr
+  output logic [31:0] instr,
+  output logic [31:0] t_instr
 
 
 );
@@ -37,6 +38,7 @@ module top
   assign br_misses = (pipelined_always_taken_inst.IF_flush && pipelined_always_taken_inst.EXMEM_is_jmp);
   assign br_instr  = pipelined_always_taken_inst.EXMEM_is_jmp;
   assign instr     = pipelined_always_taken_inst.IF_instr;
+  assign t_instr   = pipelined_always_taken_inst.EXMEM_pc;
 `endif // ALWAYS_TAKEN
 
 `ifdef TWO_BIT
@@ -65,6 +67,7 @@ module top
   assign br_misses = (pipelined_two_bit_inst.IF_flush && pipelined_two_bit_inst.EXMEM_is_jmp);
   assign br_instr  = pipelined_two_bit_inst.EXMEM_is_jmp;
   assign instr     = pipelined_two_bit_inst.IF_instr;
+  assign t_instr   = pipelined_two_bit_inst.EXMEM_pc;
 `endif // TWO_BIT
 
 `ifdef GSHARE
@@ -93,6 +96,7 @@ module top
   assign br_misses = (pipelined_gshare_inst.EXMEM_prediction ^ pipelined_gshare_inst.EXMEM_true_br_decision) & pipelined_gshare_inst.EXMEM_is_jmp;
   assign br_instr  = pipelined_gshare_inst.EXMEM_is_jmp;
   assign instr     = pipelined_gshare_inst.IF_instr;
+  assign t_instr   = pipelined_gshare_inst.EXMEM_pc;
 `endif
 
 `ifdef GSHAREv2
@@ -121,6 +125,7 @@ module top
   assign br_misses = (pipelined_gshare_v2_inst.EXMEM_prediction ^ pipelined_gshare_v2_inst.EXMEM_true_br_decision) & pipelined_gshare_v2_inst.EXMEM_is_jmp;
   assign br_instr  = pipelined_gshare_v2_inst.EXMEM_is_jmp;
   assign instr     = pipelined_gshare_v2_inst.IF_instr; 
+  assign t_instr   = pipelined_gshare_v2_inst.EXMEM_pc;
 `endif
 
 `ifdef AGREE
@@ -149,6 +154,7 @@ module top
   assign br_misses = pipelined_agree_inst.IF_flush;
   assign br_instr  = pipelined_agree_inst.EXMEM_is_jmp;
   assign instr     = pipelined_agree_inst.IF_instr;
+  assign t_instr   = pipelined_agree_inst.EXMEM_pc;
 `endif 
 
 `ifdef AGREEv2
@@ -177,6 +183,7 @@ module top
   assign br_misses = pipelined_agree_v2_inst.IF_flush;
   assign br_instr  = pipelined_agree_v2_inst.EXMEM_is_jmp;
   assign instr     = pipelined_agree_v2_inst.IF_instr;
+  assign t_instr   = pipelined_agree_v2_inst.EXMEM_pc;
 `endif 
 
 endmodule : top

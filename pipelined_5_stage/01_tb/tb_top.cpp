@@ -21,6 +21,7 @@ vluint64_t sim_time = 0;
 
 vluint64_t br_instr_counter = 0;
 vluint64_t br_misses_counter = 0;
+vluint64_t total_instruction_counter= 0;
 vluint64_t sim_cycle = 0;
 
 //reset assertion function 
@@ -54,6 +55,7 @@ int main(int argc, char** argv, char** env) {
         if (dut->clk_i == 1) {
             if (dut->br_instr == 1) br_instr_counter++;
             if (dut->br_misses == 1) br_misses_counter++;
+            if (dut->t_instr != 0) total_instruction_counter++;
             sim_cycle++;
         }
 
@@ -70,6 +72,10 @@ int main(int argc, char** argv, char** env) {
         cycle_penalty_percent = ((double)br_misses_counter * 2 / (double)sim_cycle) * 100.0;
     }
 
+    double ipc = 0.0;
+    if (total_instruction_counter > 0) {
+        ipc = ((double)total_instruction_counter / (double)sim_cycle);
+    }
     std::cout << std::left;
     std::cout << "============================================================="                   << std::endl;
     std::cout << "                \033[32mBranch Prediction Statistics\033[0m"                     << std::endl;
@@ -81,6 +87,9 @@ int main(int argc, char** argv, char** env) {
     std::cout << std::setw(30) << "Total Cycles: "                 << sim_cycle                    << std::endl;
     std::cout << std::setw(30) << "Cycle penalties: "              << br_misses_counter * 2        << std::endl;
     std::cout << std::setw(30) << "Cycle penalty percentage: "     << cycle_penalty_percent << "%" << std::endl;
+    std::cout << std::endl;
+    std::cout << std::setw(30) << "Total Instruction: "            << total_instruction_counter    << std::endl;
+    std::cout << std::setw(30) << "IPC: "                          << ipc                          << std::endl;
     std::cout << "============================================================="                   << std::endl;
 
     #if ENABLE_TRACE
