@@ -156,23 +156,17 @@ else ifeq ($(PROGRAM), 9)
 else
 	$(error Invalid PROGRAM: $(PROGRAM). Choose from 1 to 9)
 endif
-
-	@riscv32-unknown-elf-objcopy -O verilog asm_output/out.o instruction_mem.mem
-	@riscv32-unknown-elf-objdump -d asm_output/out.o > asm_output/output.asm
-	@echo "00 00 00 00" >> instruction_mem.mem
-	@echo "Generated hex for Program: $(PROGRAM)"
-
-#	$(RISCV_PREFIX)gcc -nostartfiles -O2 \
-#		-o asm_output/out.elf \
-#		-T linker.lds \
-#		asm_output/out.o startup.o
-#	$(RISCV_PREFIX)objcopy -O verilog asm_output/out.elf asm_output/out.bin
-#	make padding
-#	make hex1
-#	make hex4
-#	make dump
-#	make file
-#	make ram
+	$(RISCV_PREFIX)gcc -nostartfiles -O2 \
+		-o asm_output/out.elf \
+		-T linker.lds \
+		asm_output/out.o startup.o
+	$(RISCV_PREFIX)objcopy -O verilog asm_output/out.elf asm_output/out.bin
+	make padding
+	make hex1
+	make hex4
+	make dump
+	make file
+	make ram
 
 
 ifeq ($(PROGRAM), test)
