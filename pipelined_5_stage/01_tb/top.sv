@@ -1,6 +1,6 @@
 `default_nettype none
 
-module top #(parameter HISTORY_WIDTH = 12)
+module top #(parameter HISTORY_WIDTH)
 (
   input  logic        clk_i,
   input  logic        rst_ni,
