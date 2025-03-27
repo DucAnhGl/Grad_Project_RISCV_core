@@ -1,16 +1,36 @@
 #*******************************************************************************
-# Creator:        Hai Cao Xuan (cxhai.sdh221@hcmut.edu.vn)
+# Creator:        
 # Description:    makefile
 #*******************************************************************************
-# Copyright (c) 2022 Hai Cao Xuan
+# Copyright (c) 
 #*******************************************************************************
 RISCV_PREFIX = /opt/riscv/bin/riscv32-unknown-elf-
 CCFLAGS      = -march=rv32i -mabi=ilp32
 
-.SUFFIXES: .o .c .S
-
+# Default
+TOP 	  ?= top.sv
+HW 		  ?= 12
 PREDICTOR ?= 1
+PROGRAM   ?= 1
+TARGET 	  ?= asm_output/out
+PADSIZE	  ?= 128k
 
+# RAM files define
+INSTRUCTIONS  = instruction_mem_padded.mem
+RAM_DIR 	  = dmem
+RAM_FILES 	  = $(RAM_DIR)/ram0.mem $(RAM_DIR)/ram1.mem $(RAM_DIR)/ram2.mem $(RAM_DIR)/ram3.mem
+DATA_MEM_FILE = data_mem_padded.mem
+
+# Define for C program whilie Compiling
+ifeq ($(PROGRAM), test)
+    TARGET = bench/test/main
+else ifeq ($(PROGRAM), coremark)
+    TARGET = bench/RV32IM-CoreMark/build/coremark
+else ifeq ($(PROGRAM), test2)
+    TARGET = bench/test2/test2
+endif
+
+# Define for Predictor whilie Compiling
 ifeq ($(PREDICTOR), 1)
     MACRO = ALWAYS_TAKEN
     PREDICTOR_NAME = "Always Taken"
@@ -36,10 +56,9 @@ else ifeq ($(PREDICTOR), 6)
     PREDICTOR_NAME = "AGREEv2"
     FILELIST = filelist/filelist6
 else
-    $(error Invalid PREDICTOR: $(PREDICTOR). Choose from 1 (ALWAYS_TAKEN), 2 (TWO_BIT), 3 (GSHARE), 4 (AGREE))
+    $(error Invalid PREDICTOR: $(PREDICTOR). Choose from 1 (ALWAYS_TAKEN), 2 (TWO_BIT), 3 (GSHARE), 4 (AGREE), 5 (GSHAREV2), 6 (AGREEV2))
 endif
 
-# FILES := -f $(FILELIST) #$(shell cat filelist)
 
 BUILD_PRESIQUITES=$(shell cat filelist | sed 's/-y//g' | sed 's/ //g')
 
@@ -52,6 +71,8 @@ LINT_FLAGS += --unroll-count 999999999
 LINT_FLAGS += -Wall --lint-only -sv
 
 ### VERILATE FLAGS
+# Pass HW to Verilator as an overridden parameter
+VERILATOR_FLAGS += -GHISTORY_WIDTH=$(HW)
 # Generate C++ in executable form
 VERILATOR_FLAGS += -sv -cc
 # Optimize
@@ -60,7 +81,7 @@ VERILATOR_FLAGS += --x-assign unique
 VERILATOR_FLAGS += -O3 -CFLAGS -DCOVERAGE
 # Warn abount lint issues; may not want this on less solid designs
 VERILATOR_FLAGS += -Wall
-#Disable all style warnings
+# Disable all style warnings
 VERILATOR_FLAGS += -Wno-style
 # Extend allowed loop body size
 VERILATOR_FLAGS += --unroll-stmts 99999
@@ -70,10 +91,6 @@ VERILATOR_FLAGS += --assert
 # Make waveforms
 VERILATOR_FLAGS += --trace-fst
 VERILATOR_FLAGS += --build -j
-
-# Specify the top module file
-TOP ?= top.sv
-
 # Add predictor-specific macro
 VERILATOR_FLAGS += -D$(MACRO)
 
@@ -97,40 +114,38 @@ lint:
 	@$(VERILATOR) $(LINT_FLAGS) -f $(FILELIST)
 
 .PHONY: build
-build: #instruction_mem.mem #./obj_dir/Vtop 
-#./obj_dir/Vtop: #../01_tb/tb_top.cpp ../01_tb/top.sv
+build: 
+	@echo
 	@echo "<>---------------- BUILD ----------------"
 	@$(VERILATOR) $(VERILATOR_FLAGS) $(VERILATOR_INPUT) --exe ../01_tb/tb_top.cpp
 
 .PHONY: sim
 sim: ./obj_dir/Vtop
+	@echo
 	@echo "<>---------------- SIMULATING ----------------"
 	@./obj_dir/Vtop +verilator+rand+reset+2
 
 .PHONY: wave
 wave: wave.fst
+	@echo
 	@echo "<>---------------- WAVEFORMS ----------------"
 	@gtkwave wave.fst wave.gtkw
 
 .PHONY: clean
 clean:
 	@rm -rf obj_dir
-	@rm -f *.fst
+	@rm -f *.fst *.csv
 	@rm -f asm_output/*.bin asm_output/*.dump asm_output/*.hex asm_output/*.o asm_output/*.elf
 	@rm -f bench/test/*.o bench/test/*.bin bench/test/*.elf bench/test/*.dump bench/test/*.hex
 	@rm -rf bench/RV32IM-CoreMark/build/*
 	@rm -f $(RAM_FILES) $(DATA_MEM_FILE) instruction_mem.mem instruction_mem_padded.mem startup.o
-	@echo "<> CLEAN ---------------------"
+	@echo "<> --------------- CLEAN ---------------"
 
 .PHONY: all
 all:
 	@echo "Using Predictor: $(PREDICTOR_NAME)"
 	make build
 	make sim
-
-PROGRAM ?= 1
-TARGET ?= asm_output/out
-PADSIZE ?= 128k
 
 .PHONY: hex
 hex:
@@ -168,15 +183,6 @@ endif
 	make file
 	make ram
 
-
-ifeq ($(PROGRAM), test)
-TARGET       = bench/test/main
-else ifeq ($(PROGRAM), coremark)
-TARGET       = bench/RV32IM-CoreMark/build/coremark
-else ifeq ($(PROGRAM), test2)
-TARGET       = bench/test2/test2
-endif
-
 .PHONY: hexc
 hexc:
 ifeq ($(PROGRAM), test)
@@ -207,6 +213,9 @@ endif
 	make file
 	make ram
 
+.PHONY: log
+log:
+	./run_sweep.sh
 ###############################################################################
 padding:
 	cp $(TARGET).bin $(TARGET)_.bin
@@ -228,27 +237,14 @@ file:
 	cp $(TARGET)4.hex instruction_mem_padded.mem
 	cp $(TARGET).dump asm_output/output.asm
 
-###############################################################################
-
-# Variables
-INSTRUCTIONS = instruction_mem_padded.mem
-RAM_DIR = dmem
-RAM_FILES = $(RAM_DIR)/ram0.mem $(RAM_DIR)/ram1.mem $(RAM_DIR)/ram2.mem $(RAM_DIR)/ram3.mem
-DATA_MEM_FILE = data_mem_padded.mem
-
-# Default target for making the RAM files and data file
 ram: $(RAM_FILES)
-
-# Rule to create the dmem directory if it doesn't exist
 $(RAM_DIR):
 	mkdir -p $(RAM_DIR)
 
-# Rule to create the data_mem_padded.mem file (cut and save lines from 16385 to end)
 $(DATA_MEM_FILE): $(INSTRUCTIONS)
 	sed -n '16385,$$p' $(INSTRUCTIONS) > $(DATA_MEM_FILE)
 	sed -i '16385,$$d' $(INSTRUCTIONS)
 
-# Rule to create the RAM files from data_mem_padded.mem
 $(RAM_DIR)/ram0.mem: $(DATA_MEM_FILE) $(RAM_DIR)
 	@awk '{ print substr($$1, 7, 2) }' $(DATA_MEM_FILE) > $(RAM_DIR)/ram0.mem
 

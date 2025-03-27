@@ -1,4 +1,6 @@
-module pipelined_always_taken (
+module pipelined_always_taken #(
+    INDEX_WIDTH
+)(
     input  logic        clk_i,      // Global clock, active on the rising edge
     input  logic        rst_ni,     // Global low active reset
     input  logic [31:0] io_sw_i,    // Input for switches
@@ -18,8 +20,6 @@ module pipelined_always_taken (
 //                        io_hex7_o,  // Output for driving 7-segment LED display
     output logic [31:0] io_lcd_o    // Output for driving the LCD register
 ); 
-
-localparam INDEX_WIDTH = 9;
 
 /*==============================   IF SIGNALS   ==============================*/
     logic [31:0] IF_pc, IF_pcplus4, IF_instr, IF_pcnext, IF_btb_rd_target;
