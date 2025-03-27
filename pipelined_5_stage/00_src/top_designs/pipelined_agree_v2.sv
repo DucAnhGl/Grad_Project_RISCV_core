@@ -23,9 +23,9 @@ localparam INDEX_WIDTH = 12;
 localparam HISTORY_WIDTH = 9;
 
 /*==============================   IF SIGNALS   ==============================*/
-    logic [31:0] IF_pc, IF_pcplus4, IF_instr, IF_pcnext, IF_btb_rd_target;
+    logic [31:0] IF_pc, IF_pcplus4, IF_instr, IF_pcnext, IF_btb_rd_target, IF_predict_channel, IF_recover_channel;
     logic        IF_btb_hit, IF_flush, IF_prediction;
-    logic [1:0]  IF_PCnext_sel;
+//    logic [1:0]  IF_PCnext_sel;
 
     logic [(HISTORY_WIDTH-1):0] IF_ghr_data;
     logic                       IF_btb_bias;
@@ -73,7 +73,7 @@ localparam HISTORY_WIDTH = 9;
 
     /* Data signal */
     logic [31:0] EXMEM_alu_data, EXMEM_br_addr, EXMEM_rs2_data, EXMEM_pc, EXMEM_pcplus4;
-    logic        EXMEM_true_br_decision, EXMEM_btb_hit, EXMEM_prediction;
+    logic        EXMEM_true_br_decision, EXMEM_btb_hit, EXMEM_prediction, EXMEM_mispredict;
     logic [2:0]  EXMEM_funct3;
     logic [4:0]  EXMEM_rd;
     logic [31:0] MEM_lsu_rdata;
@@ -107,7 +107,8 @@ localparam HISTORY_WIDTH = 9;
 /*==============================   IF STAGE   ==============================*/
     // Instruction mem
     imem inst_imem(
-        .addr_i (IF_pc),
+        .clk_i  (clk_i),
+        .addr_i (IF_pcnext),
         .data_o (IF_instr)
     );
 
@@ -130,19 +131,45 @@ localparam HISTORY_WIDTH = 9;
         .EXMEM_btb_hit_i       (EXMEM_btb_hit),                  
         .EXMEM_prediction_i    (EXMEM_prediction),
         .EXMEM_br_decision_i   (EXMEM_true_br_decision),              
-        .EXMEM_is_jmp_i        (EXMEM_is_br || (EXMEM_is_uncbr==2'b10)),
+        .EXMEM_is_jmp_i        (EXMEM_is_jmp),
         .EXMEM_ghr_data_i      (EXMEM_ghr_data),
         .EXMEM_bias_i          (EXMEM_btb_bias),
 
         .IF_btb_hit_o          (IF_btb_hit),    
         .IF_prediction_o       (IF_prediction),                 
-        .IF_PCnext_sel_o       (IF_PCnext_sel),                  
+        //.IF_PCnext_sel_o       (IF_PCnext_sel),                  
         .IF_btb_rd_target_o    (IF_btb_rd_target),               
-        .IF_flush_o            (IF_flush),
+        //.IF_flush_o            (IF_flush),
         .IF_ghr_data_o         (IF_ghr_data),
         .IF_bias_o             (IF_btb_bias)         
     );
 
+    //PCnext selection MUXes:
+    always @(*) begin
+        case (IF_prediction)
+            1'b0   : IF_predict_channel = IF_pcplus4;
+            1'b1   : IF_predict_channel = IF_btb_rd_target;
+            default: IF_predict_channel = IF_pcplus4;
+        endcase
+    end
+
+    always @(*) begin
+        case (EXMEM_mispredict & EXMEM_true_br_decision)
+            1'b0   : IF_recover_channel = EXMEM_pcplus4;
+            1'b1   : IF_recover_channel = EXMEM_br_addr;
+            default: IF_recover_channel = EXMEM_pcplus4;
+        endcase
+    end
+
+    always @(*) begin
+        case (EXMEM_mispredict)
+            1'b0   : IF_pcnext = IF_predict_channel;
+            1'b1   : IF_pcnext = IF_recover_channel;  
+            default: IF_pcnext = IF_predict_channel;
+        endcase
+    end
+
+    assign IF_flush = EXMEM_mispredict;
 
     //PC reg: async rstn, sync wren
     always @(posedge clk_i or negedge rst_ni) begin
@@ -157,9 +184,9 @@ localparam HISTORY_WIDTH = 9;
     assign IF_pcplus4 = IF_pc + 32'h4;
 
     //next PC select mux
-    assign IF_pcnext = (IF_PCnext_sel == 2'b00) ? IF_pcplus4 :
-                       (IF_PCnext_sel == 2'b01) ? EXMEM_pcplus4 :
-                       (IF_PCnext_sel == 2'b10) ? IF_btb_rd_target : EXMEM_br_addr;
+    // assign IF_pcnext = (IF_PCnext_sel == 2'b00) ? IF_pcplus4 :
+    //                    (IF_PCnext_sel == 2'b01) ? EXMEM_pcplus4 :
+    //                    (IF_PCnext_sel == 2'b10) ? IF_btb_rd_target : EXMEM_br_addr;
 
     // IFID pipeline register:
     always @(posedge clk_i or negedge rst_ni) begin
@@ -475,6 +502,7 @@ lsu_v2 inst_lsu (
 );
 
 assign EXMEM_is_jmp = EXMEM_is_br || (EXMEM_is_uncbr==2'b10);
+assign EXMEM_mispredict = ((EXMEM_prediction ^ EXMEM_true_br_decision) & EXMEM_is_jmp) | (EXMEM_is_uncbr==2'b11);
 
 //MEMWB pipeline register: async rstn
 always @(posedge clk_i or negedge rst_ni) begin

@@ -3,6 +3,7 @@
 # Registers t0-t4 represent the array elements array[0] to array[4].
 .global main
 main:
+    nop
     li t0, 5        # array[0]
     li t1, 3        # array[1]
     li t2, 4        # array[2]

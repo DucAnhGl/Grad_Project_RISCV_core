@@ -29,12 +29,8 @@ module agree_predictor #(
     
     output logic                          IF_btb_hit_o,            // Whether the instruction in the Fetch stage "hit"
     output logic                          IF_prediction_o,         // The prediction the predictor make
-    output logic [1:0]                    IF_PCnext_sel_o,         // Selection for the PCnext MUX:
-                                                                   // 2'b00: IF_PCplus4;    2'b01: EXMEM_PCplus4, 
-                                                                   // 2'b10: IF_btb_target; 2'b11: EXMEM_br_target
     output logic                          IF_bias_o,               // Bias bit assigned to branch in btb
     output logic [31:0]                   IF_btb_rd_target_o,      // Target read from btb in Fetch stage
-    output logic                          IF_flush_o,              // Flush signal for penalty when prediction is wrong
     output logic [(HISTORY_WIDTH-1):0]    IF_ghr_data_o 
 );
 
@@ -94,44 +90,5 @@ module agree_predictor #(
         .br_taken_i  (EXMEM_br_decision_i),    
         .ghr_data_o  (IF_ghr_data_o)     
     );
-
-    //Next PC selection decoder: 
-    always @(*) begin
-        if (EXMEM_is_jmp_i) begin                            // For B-type and JAL instructions
-            case ({EXMEM_prediction_i, EXMEM_br_decision_i})
-                2'b00, 2'b11: begin                          // prediction was correct: Follow predictor to predict next PC
-                    if (IF_prediction_o) begin               // If it's predicted taken
-                        IF_PCnext_sel_o = 2'b10;             // take stored target as next PC
-                        IF_flush_o      = 1'b0;
-                    end else begin
-                        IF_PCnext_sel_o = 2'b00;             // If it's a miss in btb or it's predicted not taken, take PC+4 as next address
-                        IF_flush_o      = 1'b0;
-                    end
-                end
-                2'b10: begin                                 // predicted branch, but actually not branch
-                    IF_PCnext_sel_o = 2'b01;                 // recover to PCplus4
-                    IF_flush_o      = 1'b1;                  // Flush wrong instructions
-                end
-                2'b01: begin                                 // predicted not branch, but actually branch
-                    IF_PCnext_sel_o = 2'b11;                 // recover to correct branch target
-                    IF_flush_o      = 1'b1;                  // Flush wrong instructions
-                end
-            endcase
-        end else begin
-            if (EXMEM_br_decision_i) begin                  // For JALR instructions
-
-                IF_PCnext_sel_o = 2'b11;                    // If it's a miss in btb or it's predicted not taken, but actually branch, recover to correct branch target
-                IF_flush_o      = 1'b1;
-            end else begin
-                if (IF_prediction_o) begin                   // If it's predicted taken
-                    IF_PCnext_sel_o = 2'b10;                 // take stored target as next PC
-                    IF_flush_o      = 1'b0;
-                end else begin
-                    IF_PCnext_sel_o = 2'b00;                 // If it's a miss in btb or it's predicted not taken, take PC+4 as next address
-                    IF_flush_o      = 1'b0;
-                end
-            end
-        end
-    end
     
 endmodule
