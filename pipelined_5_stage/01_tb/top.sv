@@ -1,6 +1,6 @@
 `default_nettype none
 
-module top
+module top #(parameter HISTORY_WIDTH = 12)
 (
   input  logic        clk_i,
   input  logic        rst_ni,
@@ -13,7 +13,9 @@ module top
 
 );
 `ifdef ALWAYS_TAKEN
-  pipelined_always_taken pipelined_always_taken_inst (
+  pipelined_always_taken #( 
+      .INDEX_WIDTH(HISTORY_WIDTH)
+  )pipelined_always_taken_inst (
     .clk_i  (clk_i),
     .rst_ni (rst_ni),
 
@@ -42,7 +44,9 @@ module top
 `endif // ALWAYS_TAKEN
 
 `ifdef TWO_BIT
-  pipelined_two_bit pipelined_two_bit_inst (
+  pipelined_two_bit #( 
+      .INDEX_WIDTH(HISTORY_WIDTH)
+  )pipelined_two_bit_inst (
     .clk_i  (clk_i),
     .rst_ni (rst_ni),
     
@@ -71,7 +75,9 @@ module top
 `endif // TWO_BIT
 
 `ifdef GSHARE
-  pipelined_gshare pipelined_gshare_inst (
+  pipelined_gshare #( 
+      .HISTORY_WIDTH(HISTORY_WIDTH)
+  )pipelined_gshare_inst (
     .clk_i  (clk_i),
     .rst_ni (rst_ni),
     
@@ -100,7 +106,9 @@ module top
 `endif
 
 `ifdef GSHAREv2
-  pipelined_gshare_v2 pipelined_gshare_v2_inst (
+  pipelined_gshare_v2 #( 
+      .HISTORY_WIDTH(HISTORY_WIDTH)
+  )pipelined_gshare_v2_inst (
     .clk_i  (clk_i),
     .rst_ni (rst_ni),
     
@@ -129,7 +137,9 @@ module top
 `endif
 
 `ifdef AGREE
-  pipelined_agree pipelined_agree_inst (
+  pipelined_agree #( 
+      .HISTORY_WIDTH(HISTORY_WIDTH)
+  )pipelined_agree_inst (
     .clk_i  (clk_i),
     .rst_ni (rst_ni),
     
@@ -158,7 +168,9 @@ module top
 `endif 
 
 `ifdef AGREEv2
-  pipelined_agree_v2 pipelined_agree_v2_inst (
+  pipelined_agree_v2 #( 
+      .HISTORY_WIDTH(HISTORY_WIDTH)
+  ) pipelined_agree_v2_inst (
     .clk_i  (clk_i),
     .rst_ni (rst_ni),
     

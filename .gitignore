@@ -17,3 +17,4 @@ pipelined_5_stage/02_sim/asm_output/output.asm
 *.hex
 *.mem
 *.elf
+*.csv

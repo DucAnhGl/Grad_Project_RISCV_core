@@ -1,4 +1,6 @@
-module pipelined_gshare_v2 (
+module pipelined_gshare_v2 #(
+    HISTORY_WIDTH
+)(
     input  logic        clk_i,      // Global clock, active on the rising edge
     input  logic        rst_ni,     // Global low active reset
     input  logic [31:0] io_sw_i,    // Input for switches
@@ -20,7 +22,6 @@ module pipelined_gshare_v2 (
 ); 
 
 localparam INDEX_WIDTH = 12;
-localparam HISTORY_WIDTH = 12;
 
 /*==============================   IF SIGNALS   ==============================*/
     logic [31:0] IF_pc, IF_pcplus4, IF_instr, IF_pcnext, IF_btb_rd_target;
