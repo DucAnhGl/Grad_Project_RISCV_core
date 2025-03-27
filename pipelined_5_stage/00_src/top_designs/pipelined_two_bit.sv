@@ -21,7 +21,6 @@ module pipelined_two_bit #(
     output logic [31:0] io_lcd_o    // Output for driving the LCD register
 ); 
 
-localparam  = 11;
 
 /*==============================   IF SIGNALS   ==============================*/
     logic [31:0] IF_pc, IF_pcplus4, IF_instr, IF_pcnext, IF_btb_rd_target;
