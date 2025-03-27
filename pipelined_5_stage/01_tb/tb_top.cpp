@@ -107,6 +107,9 @@ int main(int argc, char** argv, char** env) {
     delete m_trace;
 #endif
 
+    std::string summary_str = summary.str();
+    std::cout << summary_str;           // Print to terminal
+
     logFile << std::fixed << std::setprecision(4)
     << ipc << " " << 100 - penalty_percent << std::endl;
 
