@@ -1,6 +1,7 @@
 
 .global main
 main:
+    nop
     # Initialize registers
     li      t0, 0              # Initialize loop counter (t0)
     li      t1, 100             # Loop limit (10 iterations)
