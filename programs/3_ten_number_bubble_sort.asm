@@ -2,6 +2,7 @@
 # Registers t0 to t6, and a0 to a3 are used for array elements.
 .global main
 main:
+    nop
     li t0, 10       # array[0]
     li t1, 9        # array[1]
     li t2, 8        # array[2]
