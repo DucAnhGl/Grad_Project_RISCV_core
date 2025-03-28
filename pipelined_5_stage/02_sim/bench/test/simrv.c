@@ -22,18 +22,21 @@ void simrv_puts (char *str) {
 }
 
 void simrv_puth (unsigned int n) {
-    char str[8];
-    unsigned int  hexn = 0;
-    unsigned int  size = 0;
+    volatile int *result_mem = (volatile int *)0x20000;
+    *result_mem = n;
 
-    do {
-        hexn = n & 0xf;
-        if(hexn < 10) str[size++] = (char) (hexn + '0');
-        else          str[size++] = (char) (hexn - 10 + 'A');
-        n = n >> 4;
-    } while (n != 0);
+    // char str[8];
+    // unsigned int  hexn = 0;
+    // unsigned int  size = 0;
 
-    for (int i = size-1; i >= 0; i--) {
-        simrv_putc(str[i]);
-    }
+    // do {
+    //     hexn = n & 0xf;
+    //     if(hexn < 10) str[size++] = (char) (hexn + '0');
+    //     else          str[size++] = (char) (hexn - 10 + 'A');
+    //     n = n >> 4;
+    // } while (n != 0);
+
+    // for (int i = size-1; i >= 0; i--) {
+    //     simrv_putc(str[i]);
+    // }
 }
