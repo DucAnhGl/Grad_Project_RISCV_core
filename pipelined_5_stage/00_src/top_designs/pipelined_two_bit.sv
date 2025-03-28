@@ -98,8 +98,8 @@ module pipelined_two_bit #(
 /*==============================   IF STAGE   ==============================*/
     // Instruction mem
     imem inst_imem(
-        .clk_i  (clk_i),
-        .addr_i (IF_pcnext),
+        //.clk_i  (clk_i),
+        .addr_i (IF_pc),
         .data_o (IF_instr)
     );
 
