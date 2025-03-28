@@ -18,3 +18,4 @@ pipelined_5_stage/02_sim/asm_output/output.asm
 *.mem
 *.elf
 *.csv
+*.hier

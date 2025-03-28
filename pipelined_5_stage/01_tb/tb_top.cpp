@@ -8,7 +8,7 @@
 #include <fstream>
 #include <verilated.h>
 
-#define ENABLE_TRACE 1
+#define ENABLE_TRACE 0
 
 #if ENABLE_TRACE
     #include <verilated_fst_c.h>

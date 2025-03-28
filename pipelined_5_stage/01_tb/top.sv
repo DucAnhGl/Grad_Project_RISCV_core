@@ -1,6 +1,6 @@
 `default_nettype none
 
-module top #(parameter HISTORY_WIDTH = 12)
+module top #(parameter HISTORY_WIDTH)
 (
   input  logic        clk_i,
   input  logic        rst_ni,
@@ -99,7 +99,7 @@ module top #(parameter HISTORY_WIDTH = 12)
     .io_lcd_o   () // Output for driving the LCD register
   );
 
-  assign br_misses = (pipelined_gshare_inst.EXMEM_prediction ^ pipelined_gshare_inst.EXMEM_true_br_decision) & pipelined_gshare_inst.EXMEM_is_jmp;
+  assign br_misses = (pipelined_gshare_inst.IF_flush && pipelined_gshare_inst.EXMEM_is_jmp);
   assign br_instr  = pipelined_gshare_inst.EXMEM_is_jmp;
   assign instr     = pipelined_gshare_inst.IF_instr;
   assign t_instr   = pipelined_gshare_inst.EXMEM_pc;
@@ -130,7 +130,7 @@ module top #(parameter HISTORY_WIDTH = 12)
     .io_lcd_o   () // Output for driving the LCD register
   );
 
-  assign br_misses = (pipelined_gshare_v2_inst.EXMEM_prediction ^ pipelined_gshare_v2_inst.EXMEM_true_br_decision) & pipelined_gshare_v2_inst.EXMEM_is_jmp;
+  assign br_misses = (pipelined_gshare_v2_inst.IF_flush && pipelined_gshare_v2_inst.EXMEM_is_jmp);
   assign br_instr  = pipelined_gshare_v2_inst.EXMEM_is_jmp;
   assign instr     = pipelined_gshare_v2_inst.IF_instr; 
   assign t_instr   = pipelined_gshare_v2_inst.EXMEM_pc;
@@ -161,7 +161,7 @@ module top #(parameter HISTORY_WIDTH = 12)
     .io_lcd_o   () // Output for driving the LCD register
   );
 
-  assign br_misses = pipelined_agree_inst.IF_flush;
+  assign br_misses = (pipelined_agree_inst.IF_flush && pipelined_agree_inst.EXMEM_is_jmp);
   assign br_instr  = pipelined_agree_inst.EXMEM_is_jmp;
   assign instr     = pipelined_agree_inst.IF_instr;
   assign t_instr   = pipelined_agree_inst.EXMEM_pc;
@@ -192,7 +192,7 @@ module top #(parameter HISTORY_WIDTH = 12)
     .io_lcd_o   () // Output for driving the LCD register
   );
 
-  assign br_misses = pipelined_agree_v2_inst.IF_flush;
+  assign br_misses = (pipelined_agree_v2_inst.IF_flush && pipelined_agree_v2_inst.EXMEM_is_jmp);
   assign br_instr  = pipelined_agree_v2_inst.EXMEM_is_jmp;
   assign instr     = pipelined_agree_v2_inst.IF_instr;
   assign t_instr   = pipelined_agree_v2_inst.EXMEM_pc;
