@@ -175,7 +175,7 @@ endif
 		-o asm_output/out.elf \
 		-T linker.lds \
 		asm_output/out.o startup.o
-	$(RISCV_PREFIX)objcopy -O verilog asm_output/out.elf asm_output/out.bin
+	$(RISCV_PREFIX)objcopy -O binary asm_output/out.elf asm_output/out.bin
 	make padding
 	make hex1
 	make hex4
