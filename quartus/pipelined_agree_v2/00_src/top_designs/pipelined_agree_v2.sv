@@ -1,5 +1,5 @@
 module pipelined_agree_v2 #(
-    HISTORY_WIDTH
+    HISTORY_WIDTH = 6
 ) (
     input  logic        clk_i,      // Global clock, active on the rising edge
     input  logic        rst_ni,     // Global low active reset
