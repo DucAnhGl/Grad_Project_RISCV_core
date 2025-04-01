@@ -15,16 +15,20 @@ module pipelined_agree_v2 #(
                         io_hex3_o,  // Output for driving 7-segment LED display
                         io_hex4_o,  // Output for driving 7-segment LED display
                         io_hex5_o,  // Output for driving 7-segment LED display
-    output logic [31:0] io_lcd_o    // Output for driving the LCD register
+    output logic [31:0] io_lcd_o,    // Output for driving the LCD register
+	 output logic [31:0] IF_instr_debug
 ); 
 
 localparam INDEX_WIDTH = 12;
 // localparam HISTORY_WIDTH = 12;
 
+
 /*==============================   IF SIGNALS   ==============================*/
     logic [31:0] IF_pc, IF_pcplus4, IF_instr, IF_pcnext, IF_btb_rd_target, IF_predict_channel, IF_recover_channel;
     logic        IF_btb_hit, IF_flush, IF_prediction;
 //    logic [1:0]  IF_PCnext_sel;
+
+    assign IF_instr_debug = IF_instr;
 
     logic [(HISTORY_WIDTH-1):0] IF_ghr_data;
     logic                       IF_btb_bias;
@@ -181,7 +185,7 @@ localparam INDEX_WIDTH = 12;
     end
 
     //PC plus 4 adder
-    assign IF_pcplus4 = IF_pc + 32'h1;
+    assign IF_pcplus4 = IF_pc + 32'h4;
 
     //next PC select mux
     // assign IF_pcnext = (IF_PCnext_sel == 2'b00) ? IF_pcplus4 :

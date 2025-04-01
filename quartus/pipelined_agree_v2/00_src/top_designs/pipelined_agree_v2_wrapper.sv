@@ -9,8 +9,9 @@ module pipelined_agree_v2_wrapper (
                         HEX2,  // Output for driving 7-segment LED display
                         HEX3,  // Output for driving 7-segment LED display
                         HEX4,  // Output for driving 7-segment LED display
-                        HEX5  // Output for driving 7-segment LED display
+                        HEX5,  // Output for driving 7-segment LED display
     //output logic [12:0] LCD    // Output for driving the LCD register
+	 output logic [31:0] IF_instr_debug
 );
 
 	localparam HISTORY_WIDTH = 8;
@@ -46,7 +47,8 @@ module pipelined_agree_v2_wrapper (
         .io_hex3_o       (HEX3),
         .io_hex4_o       (HEX4),   
         .io_hex5_o       (HEX5),
-        .io_lcd_o        ()   
+        .io_lcd_o        (),
+	     .IF_instr_debug  (IF_instr_debug)	  
     );
 
 
