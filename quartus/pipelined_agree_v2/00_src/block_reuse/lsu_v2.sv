@@ -190,10 +190,10 @@ module lsu_v2 (
     );
 
     initial begin
-        $readmemh("../02_sim/dmem/ram0.mem",lsu_v2.data_ram_0.data_mem);
-        $readmemh("../02_sim/dmem/ram1.mem",lsu_v2.data_ram_1.data_mem);
-        $readmemh("../02_sim/dmem/ram2.mem",lsu_v2.data_ram_2.data_mem);
-        $readmemh("../02_sim/dmem/ram3.mem",lsu_v2.data_ram_3.data_mem);
+        $readmemh("../../02_dmemdata/ram0.mem",lsu_v2.data_ram_0.data_mem);
+        $readmemh("../../02_dmemdata/ram1.mem",lsu_v2.data_ram_1.data_mem);
+        $readmemh("../../02_dmemdata/ram2.mem",lsu_v2.data_ram_2.data_mem);
+        $readmemh("../../02_dmemdata/ram3.mem",lsu_v2.data_ram_3.data_mem);
     end
 
 /////////////// Load-store for output buffers //////////////////
