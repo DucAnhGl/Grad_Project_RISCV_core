@@ -28,6 +28,8 @@ else ifeq ($(PROGRAM), coremark)
     TARGET = bench/RV32IM-CoreMark/build/coremark
 else ifeq ($(PROGRAM), test2)
     TARGET = bench/test2/test2
+else ifeq ($(PROGRAM), ledr)
+    TARGET = bench/ledr/ledr
 endif
 
 # Define for Predictor whilie Compiling
@@ -203,6 +205,14 @@ else ifeq ($(PROGRAM), test2)
 		bench/test2/test2.c \
 		startup.o
 	$(RISCV_PREFIX)objcopy -O binary bench/test2/test2.elf bench/test2/test2.bin
+else ifeq ($(PROGRAM), ledr)
+	$(RISCV_PREFIX)as -o startup.o startup.S -march=rv32i -mabi=ilp32
+	$(RISCV_PREFIX)gcc -nostartfiles -O2 \
+		-o bench/ledr/ledr.elf \
+		-T linker.lds \
+		bench/ledr/ledr.c \
+		startup.o
+	$(RISCV_PREFIX)objcopy -O binary bench/ledr/ledr.elf bench/ledr/ledr.bin
 else
 	$(error Invalid PROGRAM: $(PROGRAM). Choose from 1 to 7)
 endif
