@@ -35,3 +35,6 @@ pipelined_5_stage/02_sim/asm_output/output.asm
 *.hier
 /quartus/pipelined_agree_v2/db
 /quartus/pipelined_agree_v2/output_files
+/quartus/pipelined_agree_v2/incremental_db
+/quartus/pipelined_agree_v2/simulation
+/quartus/pipelined_agree_v2/incremental_db

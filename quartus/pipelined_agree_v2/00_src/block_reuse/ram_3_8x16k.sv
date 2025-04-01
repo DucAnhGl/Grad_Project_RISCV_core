@@ -9,9 +9,9 @@ module ram_3_8x16k (
     //Memory array creation
     logic [7:0] data_mem [0:16383];
 
-    initial begin
-      $readmemh("../../02_dmemdata/ram3.mem", data_mem);
-    end
+//    initial begin
+//      $readmemh("../../02_dmemdata/ram3.mem", data_mem);
+//    end
 
     //Synchronous write, synchronous enable
     always @(posedge clk_i) begin
