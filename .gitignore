@@ -19,3 +19,4 @@ pipelined_5_stage/02_sim/asm_output/output.asm
 *.elf
 *.csv
 *.hier
+/quartus/pipelined_agree_v2/db
