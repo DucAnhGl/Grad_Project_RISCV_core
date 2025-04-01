@@ -1,7 +1,9 @@
 
 export ABI   			?=ilp32
 export ARCH				?=i
+
 export ITERATIONS	?=10
+
 # Paths
 export root_dir := $(shell pwd)
 export tst_dir  := $(root_dir)/src

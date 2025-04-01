@@ -99,6 +99,7 @@ module pipelined_two_bit #(
     // Instruction mem
     imem inst_imem(
         .clk_i  (clk_i),
+        .rden_i (pc_wren),
         .addr_i (IF_pcnext),
         .data_o (IF_instr)
     );
