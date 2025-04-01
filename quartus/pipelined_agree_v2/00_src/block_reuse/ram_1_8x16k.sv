@@ -1,4 +1,4 @@
-module ram8x16k (
+module ram_1_8x16k (
     input clk_i, wren_i,
     input [13:0] addr_i, // Address for read and write
     input [7:0] wdata_i, // Data to store into memory
@@ -8,6 +8,10 @@ module ram8x16k (
 
     //Memory array creation
     logic [7:0] data_mem [0:16383];
+
+    initial begin
+      $readmemh("../../02_dmemdata/ram1.mem", data_mem);
+    end
 
     //Synchronous write, synchronous enable
     always @(posedge clk_i) begin

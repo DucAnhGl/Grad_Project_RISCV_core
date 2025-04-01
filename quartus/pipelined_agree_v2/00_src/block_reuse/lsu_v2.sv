@@ -157,7 +157,7 @@ module lsu_v2 (
 
 /////////////// Memory blocks banking //////////////////
 //  RAM initialization
-    ram8x16k data_ram_0 (
+    ram_0_8x16k data_ram_0 (
         .clk_i   (clk_i),       
         .wren_i  (ram_0_wren),
         .addr_i  (ram_addr),
@@ -165,7 +165,7 @@ module lsu_v2 (
         .rdata_o (ram_0_rdata)
     );
 
-    ram8x16k data_ram_1 (
+    ram_1_8x16k data_ram_1 (
         .clk_i   (clk_i),       
         .wren_i  (ram_1_wren),
         .addr_i  (ram_addr),
@@ -173,7 +173,7 @@ module lsu_v2 (
         .rdata_o (ram_1_rdata)
     );
 
-    ram8x16k data_ram_2 (
+    ram_2_8x16k data_ram_2 (
         .clk_i   (clk_i),       
         .wren_i  (ram_2_wren),
         .addr_i  (ram_addr),
@@ -181,20 +181,13 @@ module lsu_v2 (
         .rdata_o (ram_2_rdata)
     );
 
-    ram8x16k data_ram_3 (
+    ram_3_8x16k data_ram_3 (
         .clk_i   (clk_i),       
         .wren_i  (ram_3_wren),
         .addr_i  (ram_addr),
         .wdata_i (st_data_i[31:24]),
         .rdata_o (ram_3_rdata)
     );
-
-    initial begin
-        $readmemh("../../02_dmemdata/ram0.mem",lsu_v2.data_ram_0.data_mem);
-        $readmemh("../../02_dmemdata/ram1.mem",lsu_v2.data_ram_1.data_mem);
-        $readmemh("../../02_dmemdata/ram2.mem",lsu_v2.data_ram_2.data_mem);
-        $readmemh("../../02_dmemdata/ram3.mem",lsu_v2.data_ram_3.data_mem);
-    end
 
 /////////////// Load-store for output buffers //////////////////
 //  Store

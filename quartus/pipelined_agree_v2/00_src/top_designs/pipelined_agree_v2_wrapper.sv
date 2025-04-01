@@ -9,7 +9,7 @@ module pipelined_agree_v2_wrapper (
                         HEX2,  // Output for driving 7-segment LED display
                         HEX3,  // Output for driving 7-segment LED display
                         HEX4,  // Output for driving 7-segment LED display
-                        HEX5,  // Output for driving 7-segment LED display
+                        HEX5  // Output for driving 7-segment LED display
     //output logic [12:0] LCD    // Output for driving the LCD register
 );
 
@@ -34,13 +34,12 @@ module pipelined_agree_v2_wrapper (
     ) pipelined_agree_v2_inst (
         .clk_i           (CLOCK_50),                
         .rst_ni          (rst_n_sync),               
-        .io_sw_i         ({{23{1'b0}},SW[8:0]}),        
+        .io_sw_i         ({{23{1'b0}},SW[8:0]}), 
         .io_btn_i        (KEY),       
 
         .pc_debug_o      (),     
         .insn_vld_o      (),           
-        .io_ledr_o[9:0]  (LEDR),  
-		  .io_ledr_o[31:10](),
+        .io_ledr_o  		 ({{22{1'b0}},LEDR[9:0]}),  
         .io_hex0_o       (HEX0),
         .io_hex1_o       (HEX1),
         .io_hex2_o       (HEX2),
