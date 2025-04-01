@@ -1,5 +1,5 @@
 module pipelined_agree_v2 #(
-    HISTORY_WIDTH = 6
+    HISTORY_WIDTH=8
 ) (
     input  logic        clk_i,      // Global clock, active on the rising edge
     input  logic        rst_ni,     // Global low active reset
@@ -9,15 +9,12 @@ module pipelined_agree_v2 #(
     output logic [31:0] pc_debug_o, // Debug program counter
     output logic        insn_vld_o, // Instruction valid
     output logic [31:0] io_ledr_o,  // Output for driving red LEDs
-//    output logic [31:0] io_ledg_o,  // Output for driving green LEDs
     output logic [6:0]  io_hex0_o,  // Output for driving 7-segment LED display
                         io_hex1_o,  // Output for driving 7-segment LED display
                         io_hex2_o,  // Output for driving 7-segment LED display
                         io_hex3_o,  // Output for driving 7-segment LED display
                         io_hex4_o,  // Output for driving 7-segment LED display
                         io_hex5_o,  // Output for driving 7-segment LED display
-//                        io_hex6_o,  // Output for driving 7-segment LED display
-//                        io_hex7_o,  // Output for driving 7-segment LED display
     output logic [31:0] io_lcd_o    // Output for driving the LCD register
 ); 
 
@@ -110,6 +107,7 @@ localparam INDEX_WIDTH = 12;
     // Instruction mem
     imem inst_imem(
         .clk_i  (clk_i),
+        .rden_i (pc_wren),
         .addr_i (IF_pcnext),
         .data_o (IF_instr)
     );
