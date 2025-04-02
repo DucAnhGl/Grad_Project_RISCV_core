@@ -174,7 +174,7 @@ module top #(parameter HISTORY_WIDTH)
     .clk_i  (clk_i),
     .rst_ni (rst_ni),
     
-    .io_sw_i    (),  // Input for switches
+    .io_sw_i    (32'h80),  // Input for switches
     .io_btn_i   (),  // Input for buttons
 
     .pc_debug_o (),  // Debug program counter

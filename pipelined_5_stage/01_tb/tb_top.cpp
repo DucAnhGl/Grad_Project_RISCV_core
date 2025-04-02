@@ -16,7 +16,7 @@
 
 #include "Vtop.h"
 
-#define MAX_SIM_TIME 2000
+#define MAX_SIM_TIME 20000
 vluint64_t sim_time = 0;
 
 vluint64_t br_instr_counter = 0;
@@ -31,6 +31,7 @@ void dut_reset (Vtop *dut, vluint64_t &sim_time) {
         dut->rst_ni = 0;
     }
 }
+
 
 int main(int argc, char** argv, char** env) {
     Verilated::commandArgs(argc, argv);

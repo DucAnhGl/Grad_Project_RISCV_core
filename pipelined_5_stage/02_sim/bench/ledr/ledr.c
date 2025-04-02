@@ -2,16 +2,16 @@
 
 void test() {
     volatile int *result_mem = (volatile int *)0x20000;
-    *result_mem = 255;
+    *result_mem = 0x55;
 }
 
 void toggle() {
     volatile int *result_mem2 = (volatile int *)0x20000;
-    *result_mem2 = 0;
+    *result_mem2 = 0xAA;
 }
 
 void delay() {
-    for (volatile int i = 0; i < 10000000; i++) {
+    for (volatile int i = 0; i < 2500000; i++) {
 
     }
 }

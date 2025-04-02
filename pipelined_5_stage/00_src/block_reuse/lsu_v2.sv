@@ -223,8 +223,6 @@ module lsu_v2 (
                     2'b00  : output_mem_out = {24'b0, output_mem[output_mem_addr]};
                     // Load-half-word:
                     2'b01  : output_mem_out = {16'b0, output_mem[output_mem_addr+4'h1], output_mem[output_mem_addr]};
-                    // Load-word:
-                    2'b10  : output_mem_out = {output_mem[output_mem_addr+4'h3], output_mem[output_mem_addr+4'h2], output_mem[output_mem_addr+4'h1], output_mem[output_mem_addr]};
                     default: output_mem_out = {24'b0, output_mem[output_mem_addr]};
                 endcase
             end
@@ -234,6 +232,8 @@ module lsu_v2 (
                     2'b00   : output_mem_out = {{24{output_mem[output_mem_addr][7]}}, output_mem[output_mem_addr]};
                     // Load-half-word:
                     2'b01   : output_mem_out = {{16{output_mem[output_mem_addr+4'h1][7]}}, output_mem[output_mem_addr+4'h1], output_mem[output_mem_addr]};
+                    // Load-word:
+                    2'b10   : output_mem_out = {output_mem[output_mem_addr+4'h3], output_mem[output_mem_addr+4'h2], output_mem[output_mem_addr+4'h1], output_mem[output_mem_addr]};
                     default : output_mem_out = {{24{output_mem[output_mem_addr][7]}}, output_mem[output_mem_addr]};
                 endcase
             end 
@@ -260,8 +260,6 @@ module lsu_v2 (
                     2'b00  : input_mem_out = {24'b0, input_mem[input_mem_addr]};
                     // Load-half-word:
                     2'b01  : input_mem_out = {16'b0, input_mem[input_mem_addr+3'h1], input_mem[input_mem_addr]};
-                    // Load-word:
-                    2'b10  : input_mem_out = {input_mem[input_mem_addr+3'h3], input_mem[input_mem_addr+3'h2], input_mem[input_mem_addr+3'h1], input_mem[input_mem_addr]};
                     default: input_mem_out = {24'b0, input_mem[input_mem_addr]};
                 endcase
             end
@@ -271,6 +269,8 @@ module lsu_v2 (
                     2'b00   : input_mem_out = {{24{input_mem[input_mem_addr][7]}}, input_mem[input_mem_addr]};
                     // Load-half-word:
                     2'b01   : input_mem_out = {{16{input_mem[input_mem_addr+3'h1][7]}}, input_mem[input_mem_addr+3'h1], input_mem[input_mem_addr]};
+                    // Load-word:
+                    2'b10   : input_mem_out = {input_mem[input_mem_addr+3'h3], input_mem[input_mem_addr+3'h2], input_mem[input_mem_addr+3'h1], input_mem[input_mem_addr]};
                     default : input_mem_out = {{24{input_mem[input_mem_addr][7]}}, input_mem[input_mem_addr]};
                 endcase
             end 
