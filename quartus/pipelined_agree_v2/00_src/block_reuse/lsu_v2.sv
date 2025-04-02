@@ -13,7 +13,7 @@ module lsu_v2 (
     output logic [31:0] ld_data_o,
 
     output logic [31:0] io_lcd_o, 
-                        io_ledr_o,
+    output logic [9:0]  io_ledr_o,
 
     output logic [6:0]  io_hex0_o, 
                         io_hex1_o,
@@ -37,6 +37,7 @@ module lsu_v2 (
                  ram_rdata,
                  output_mem_out,
                  input_mem_out;
+    logic [31:0] io_ledr_temp;
 
 //  Memory buffers declarations
     logic [7:0] input_mem[0:7];
@@ -49,7 +50,8 @@ module lsu_v2 (
     assign output_mem_addr = lsu_addr_i[3:0];
 
 /////////////// Mapping for output //////////////////
-    assign io_ledr_o = {output_mem[4'h0+4'h3], output_mem[4'h0+4'h2], output_mem[4'h0+4'h1], output_mem[4'h0]};
+    assign io_ledr_temp = {output_mem[4'h0+4'h3], output_mem[4'h0+4'h2], output_mem[4'h0+4'h1], output_mem[4'h0]};
+	 assign io_ledr_o    = io_ledr_temp[9:0];
 
     assign io_hex0_o = output_mem[4'h4][6:0];
     assign io_hex1_o = output_mem[4'h5][6:0];
@@ -203,7 +205,7 @@ module lsu_v2 (
                 //Store byte
                 else if (funct3_i[1:0] == 2'b00) output_mem[output_mem_addr] <= st_data_i[7:0];
                 //Other cases
-                else output_mem[output_mem_addr] <= output_mem[output_mem_addr];
+                //else output_mem[output_mem_addr] <= output_mem[output_mem_addr];
             end
         end
     end
@@ -240,7 +242,10 @@ module lsu_v2 (
             for (integer i = 0; i < 8; i = i+1) input_mem[i] <= 8'h00;
         end else begin
             {input_mem[3'h0+3'h3], input_mem[3'h0+3'h2], input_mem[3'h0+3'h1], input_mem[3'h0]} <= io_sw_i;
-            input_mem[3'h4] <= {4'h4, io_btn_i};
+            input_mem[3'h4] <= {4'h0, io_btn_i};
+				input_mem[3'h5] <= 8'h0;
+				input_mem[3'h6] <= 8'h0;
+				input_mem[3'h7] <= 8'h0;
         end
     end
 

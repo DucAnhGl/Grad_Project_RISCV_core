@@ -11,7 +11,6 @@ module pht #(
 );  
 
     localparam TABLE_SIZE = 2**(INDEX_WIDTH);
-    integer i;
 
     localparam STRONGLY_NOT_TAKEN = 2'b00;
     localparam WEAKLY_NOT_TAKEN   = 2'b01;
@@ -22,7 +21,7 @@ module pht #(
 
     always_ff @(posedge clk_i or negedge rst_ni) begin
         if (!rst_ni) begin
-            for (i=0; i<TABLE_SIZE; i=i+1) begin
+            for (integer i=0; i<TABLE_SIZE; i=i+1) begin
                 pht_table[i] <= WEAKLY_NOT_TAKEN; //Initial state is strongly not taken
             end
         end else begin

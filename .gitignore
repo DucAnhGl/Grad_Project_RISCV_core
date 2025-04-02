@@ -39,3 +39,4 @@ pipelined_5_stage/02_sim/asm_output/output.asm
 /quartus/pipelined_agree_v2/simulation
 
 *.vwf
+quartus/pipelined_agree_v2/c5_pin_model_dump.txt

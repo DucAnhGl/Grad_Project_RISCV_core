@@ -8,18 +8,17 @@ module pipelined_agree_v2 #(
 
     output logic [31:0] pc_debug_o, // Debug program counter
     output logic        insn_vld_o, // Instruction valid
-    output logic [31:0] io_ledr_o,  // Output for driving red LEDs
+    output logic [9:0]  io_ledr_o,  // Output for driving red LEDs
     output logic [6:0]  io_hex0_o,  // Output for driving 7-segment LED display
                         io_hex1_o,  // Output for driving 7-segment LED display
                         io_hex2_o,  // Output for driving 7-segment LED display
                         io_hex3_o,  // Output for driving 7-segment LED display
                         io_hex4_o,  // Output for driving 7-segment LED display
                         io_hex5_o,  // Output for driving 7-segment LED display
-    output logic [31:0] io_lcd_o,    // Output for driving the LCD register
-	 output logic [31:0] IF_instr_debug
+    output logic [31:0] io_lcd_o    // Output for driving the LCD register
 ); 
 
-localparam INDEX_WIDTH = 12;
+localparam INDEX_WIDTH = 8;
 // localparam HISTORY_WIDTH = 12;
 
 
@@ -27,8 +26,6 @@ localparam INDEX_WIDTH = 12;
     logic [31:0] IF_pc, IF_pcplus4, IF_instr, IF_pcnext, IF_btb_rd_target, IF_predict_channel, IF_recover_channel;
     logic        IF_btb_hit, IF_flush, IF_prediction;
 //    logic [1:0]  IF_PCnext_sel;
-
-    assign IF_instr_debug = IF_instr;
 
     logic [(HISTORY_WIDTH-1):0] IF_ghr_data;
     logic                       IF_btb_bias;
