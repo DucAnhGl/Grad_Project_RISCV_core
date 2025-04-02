@@ -3,7 +3,7 @@ module pipelined_agree_v2 #(
 ) (
     input  logic        clk_i,      // Global clock, active on the rising edge
     input  logic        rst_ni,     // Global low active reset
-    input  logic [31:0] io_sw_i,    // Input for switches
+    input  logic [8:0]  io_sw_i,    // Input for switches
     input  logic [3:0]  io_btn_i,   // Input for buttons
 
     output logic [31:0] pc_debug_o, // Debug program counter

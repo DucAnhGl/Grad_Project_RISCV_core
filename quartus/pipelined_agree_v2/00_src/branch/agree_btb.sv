@@ -20,10 +20,10 @@ module agree_btb #(
 
     localparam TABLE_SIZE = 2**(INDEX_WIDTH); // size of the table (number of rows)
 
-(* ramstyle = "logic" *) logic [31:0]                   target_table [0:(TABLE_SIZE-1)];
-(* ramstyle = "logic" *) logic [(32-INDEX_WIDTH-2)-1:0] tag_table    [0:(TABLE_SIZE-1)];
-                         logic                          valid_table  [0:(TABLE_SIZE-1)];
-(* ramstyle = "logic" *) logic                          bias_table   [0:(TABLE_SIZE-1)];
+	logic [31:0]                   target_table [0:(TABLE_SIZE-1)];
+	logic [(32-INDEX_WIDTH-2)-1:0] tag_table    [0:(TABLE_SIZE-1)];
+   logic                          valid_table  [0:(TABLE_SIZE-1)];
+	logic                          bias_table   [0:(TABLE_SIZE-1)];
 
     //Sync write:
     always @(posedge clk_i or negedge rst_ni) begin

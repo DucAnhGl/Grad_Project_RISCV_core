@@ -17,7 +17,7 @@ module bru (
     assign overflow = (rs1_data_i[31] ^ rs2_data_i[31]) & (rs1_data_i[31] ^ sub[31]); 
 
     assign br_less_uns = ~carry;
-    assign br_equal = (sub==0) ? 1 : 0;
+    assign br_equal = (sub==0) ? 1'b1 : 1'b0;
     assign br_less = sub[31] ^ overflow;
 
     always @(*) begin

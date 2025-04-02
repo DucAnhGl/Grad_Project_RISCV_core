@@ -7,7 +7,7 @@ module lsu_v2 (
     input  logic [31:0] st_data_i, 
                         lsu_addr_i,
 
-    input  logic [31:0] io_sw_i,
+    input  logic [8:0]  io_sw_i,
     input  logic [3:0]  io_btn_i,       
 
     output logic [31:0] ld_data_o,
@@ -50,8 +50,8 @@ module lsu_v2 (
     assign output_mem_addr = lsu_addr_i[3:0];
 
 /////////////// Mapping for output //////////////////
-    assign io_ledr_temp = {output_mem[4'h0+4'h3], output_mem[4'h0+4'h2], output_mem[4'h0+4'h1], output_mem[4'h0]};
-	 assign io_ledr_o    = io_ledr_temp[9:0];
+    assign io_ledr_temp  = {output_mem[4'h3], output_mem[4'h2], output_mem[4'h1], output_mem[4'h0]};
+	 assign io_ledr_o     = io_ledr_temp[9:0];
 
     assign io_hex0_o = output_mem[4'h4][6:0];
     assign io_hex1_o = output_mem[4'h5][6:0];
@@ -205,7 +205,7 @@ module lsu_v2 (
                 //Store byte
                 else if (funct3_i[1:0] == 2'b00) output_mem[output_mem_addr] <= st_data_i[7:0];
                 //Other cases
-                //else output_mem[output_mem_addr] <= output_mem[output_mem_addr];
+                else output_mem[output_mem_addr] <= output_mem[output_mem_addr];
             end
         end
     end
@@ -218,8 +218,6 @@ module lsu_v2 (
                     2'b00  : output_mem_out = {24'b0, output_mem[output_mem_addr]};
                     // Load-half-word:
                     2'b01  : output_mem_out = {16'b0, output_mem[output_mem_addr+4'h1], output_mem[output_mem_addr]};
-                    // Load-word:
-                    2'b10  : output_mem_out = {output_mem[output_mem_addr+4'h3], output_mem[output_mem_addr+4'h2], output_mem[output_mem_addr+4'h1], output_mem[output_mem_addr]};
                     default: output_mem_out = {24'b0, output_mem[output_mem_addr]};
                 endcase
             end
@@ -229,6 +227,8 @@ module lsu_v2 (
                     2'b00   : output_mem_out = {{24{output_mem[output_mem_addr][7]}}, output_mem[output_mem_addr]};
                     // Load-half-word:
                     2'b01   : output_mem_out = {{16{output_mem[output_mem_addr+4'h1][7]}}, output_mem[output_mem_addr+4'h1], output_mem[output_mem_addr]};
+                    // Load word:
+                    2'b10  :  output_mem_out = {output_mem[output_mem_addr+3'h3], output_mem[output_mem_addr+3'h2], output_mem[output_mem_addr+3'h1], output_mem[output_mem_addr]};
                     default : output_mem_out = {{24{output_mem[output_mem_addr][7]}}, output_mem[output_mem_addr]};
                 endcase
             end 
@@ -241,11 +241,14 @@ module lsu_v2 (
         if (!rst_ni) begin
             for (integer i = 0; i < 8; i = i+1) input_mem[i] <= 8'h00;
         end else begin
-            {input_mem[3'h0+3'h3], input_mem[3'h0+3'h2], input_mem[3'h0+3'h1], input_mem[3'h0]} <= io_sw_i;
+            input_mem[3'h0] <= io_sw_i[7:0];
+            input_mem[3'h1] <= {7'b0, io_sw_i[8]}; 
+            input_mem[3'h2] <= 8'h0; 
+            input_mem[3'h3] <= 8'h0; 
             input_mem[3'h4] <= {4'h0, io_btn_i};
-				input_mem[3'h5] <= 8'h0;
-				input_mem[3'h6] <= 8'h0;
-				input_mem[3'h7] <= 8'h0;
+            input_mem[3'h5] <= 8'h0;
+            input_mem[3'h6] <= 8'h0;
+            input_mem[3'h7] <= 8'h0;
         end
     end
 
@@ -258,8 +261,6 @@ module lsu_v2 (
                     2'b00  : input_mem_out = {24'b0, input_mem[input_mem_addr]};
                     // Load-half-word:
                     2'b01  : input_mem_out = {16'b0, input_mem[input_mem_addr+3'h1], input_mem[input_mem_addr]};
-                    // Load-word:
-                    2'b10  : input_mem_out = {input_mem[input_mem_addr+3'h3], input_mem[input_mem_addr+3'h2], input_mem[input_mem_addr+3'h1], input_mem[input_mem_addr]};
                     default: input_mem_out = {24'b0, input_mem[input_mem_addr]};
                 endcase
             end
@@ -269,6 +270,8 @@ module lsu_v2 (
                     2'b00   : input_mem_out = {{24{input_mem[input_mem_addr][7]}}, input_mem[input_mem_addr]};
                     // Load-half-word:
                     2'b01   : input_mem_out = {{16{input_mem[input_mem_addr+3'h1][7]}}, input_mem[input_mem_addr+3'h1], input_mem[input_mem_addr]};
+                    // Load word
+                    2'b10  :  input_mem_out = {input_mem[input_mem_addr+3'h3], input_mem[input_mem_addr+3'h2], input_mem[input_mem_addr+3'h1], input_mem[input_mem_addr]};
                     default : input_mem_out = {{24{input_mem[input_mem_addr][7]}}, input_mem[input_mem_addr]};
                 endcase
             end 

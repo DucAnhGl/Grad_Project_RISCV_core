@@ -52,12 +52,12 @@ module pipelined_agree_v2_wrapper (
     ) pipelined_agree_v2_inst (
         .clk_i           (clk_div),                
         .rst_ni          (rst_n_sync),               
-        .io_sw_i         ({{23{1'b0}},SW[8:0]}), 
+        .io_sw_i         (SW[8:0]), 
         .io_btn_i        (KEY),       
 
         .pc_debug_o      (),     
         .insn_vld_o      (),           
-        .io_ledr_o  		 (LEDR),  
+        .io_ledr_o       (LEDR),  
         .io_hex0_o       (HEX0),
         .io_hex1_o       (HEX1),
         .io_hex2_o       (HEX2),
