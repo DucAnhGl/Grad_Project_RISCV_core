@@ -11,7 +11,7 @@ void toggle() {
 }
 
 void delay() {
-    for (volatile int i = 0; i < 2500000; i++) {
+    for (volatile int i = 0; i < N; i++) {
 
     }
 }

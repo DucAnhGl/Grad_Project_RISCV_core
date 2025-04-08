@@ -16,7 +16,7 @@
 
 #include "Vtop.h"
 
-#define MAX_SIM_TIME 20000
+#define MAX_SIM_TIME 2000000
 vluint64_t sim_time = 0;
 
 vluint64_t br_instr_counter = 0;
@@ -61,6 +61,7 @@ int main(int argc, char** argv, char** env) {
         #endif
 
         if (dut->clk_i == 1) {
+            dut->io_btn_i = 0xF;
             if (dut->br_instr == 1) br_instr_counter++;
             if (dut->br_misses == 1) br_misses_counter++;
             if (dut->t_instr != 0) total_instruction_counter++;
