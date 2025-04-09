@@ -30,6 +30,8 @@ else ifeq ($(PROGRAM), test2)
     TARGET = bench/test2/test2
 else ifeq ($(PROGRAM), ledr)
     TARGET = bench/ledr/ledr
+else ifeq ($(PROGRAM), appli)
+    TARGET = bench/application/main
 endif
 
 # Define for Predictor whilie Compiling
@@ -213,6 +215,14 @@ else ifeq ($(PROGRAM), ledr)
 		bench/ledr/ledr.c \
 		startup.o
 	$(RISCV_PREFIX)objcopy -O binary bench/ledr/ledr.elf bench/ledr/ledr.bin
+else ifeq ($(PROGRAM), appli)
+	$(RISCV_PREFIX)as -o startup.o startup.S -march=rv32i -mabi=ilp32
+	$(RISCV_PREFIX)gcc -nostartfiles -O2 \
+		-o bench/application/main.elf \
+		-T linker.lds \
+		bench/application/main.c bench/application/simrv.c bench/application/acker.c bench/application/fib.c bench/application/nqueen.c bench/application/qsort.c \
+		startup.o
+	$(RISCV_PREFIX)objcopy -O binary bench/application/main.elf bench/application/main.bin
 else
 	$(error Invalid PROGRAM: $(PROGRAM). Choose from 1 to 7)
 endif
