@@ -16,27 +16,27 @@ module pipelined_agree_v2_wrapper (
 	localparam HISTORY_WIDTH = 4;
 	
 	logic Q1, rst_n_sync;
-	logic clk_div, clk_div1;
-	
-	// Clock divider 1/4
-	always@(posedge CLOCK_50 or negedge SW[9]) begin
-		if (!SW[9]) begin
-			clk_div1 <= 1'b0;
-		end
-		else 
-			clk_div1 <= ~clk_div1;
-	end
-
-	always@(posedge clk_div1 or negedge SW[9]) begin
-		if (!SW[9]) begin
-			clk_div <= 1'b0;
-		end
-		else 
-			clk_div <= ~clk_div;
-	end
+//	logic clk_div, clk_div1;
+//	
+//	// Clock divider 1/4
+//	always@(posedge CLOCK_50 or negedge SW[9]) begin
+//		if (!SW[9]) begin
+//			clk_div1 <= 1'b0;
+//		end
+//		else 
+//			clk_div1 <= ~clk_div1;
+//	end
+//
+//	always@(posedge clk_div1 or negedge SW[9]) begin
+//		if (!SW[9]) begin
+//			clk_div <= 1'b0;
+//		end
+//		else 
+//			clk_div <= ~clk_div;
+//	end
 	
 	// Reset synchronizer
-	always @(posedge clk_div or negedge SW[9]) begin
+	always @(posedge CLOCK_50 or negedge SW[9]) begin
 		if (!SW[9]) begin
 			Q1 <= 1'b0;
 			rst_n_sync <= 1'b0;
@@ -50,7 +50,7 @@ module pipelined_agree_v2_wrapper (
 	pipelined_agree_v2 #(
         .HISTORY_WIDTH(HISTORY_WIDTH)
     ) pipelined_agree_v2_inst (
-        .clk_i           (clk_div),                
+        .clk_i           (CLOCK_50),                
         .rst_ni          (rst_n_sync),               
         .io_sw_i         (SW[8:0]), 
         .io_btn_i        (KEY),       

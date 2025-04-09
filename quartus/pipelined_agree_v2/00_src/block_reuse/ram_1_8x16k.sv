@@ -7,7 +7,7 @@ module ram_1_8x16k (
 );
 
     //Memory array creation
-    logic [7:0] data_mem [0:16383];
+    (* ram_init_file = "D:/Onedrive/BK21-25/24-25-Sem8/GraduationProject/Github/Grad_Project_RISCV_core/quartus/pipelined_agree_v2/02_dmemdata/ram1.hex" *)  logic [7:0] data_mem [0:16383];
 
 //    initial begin
 //      $readmemh("../../02_dmemdata/ram1.mem", data_mem);
