@@ -34,12 +34,30 @@ const uint8_t SEG7_ENCODINGS[] = {
 void testhex(uint32_t num);
 void qsort(int arr[], int left, int right);
 int fibonacci(int n);
-int random();
+int random_1_to_1000();
 
-void delay_ms(int ms) {
-    for (int i = 0; i < ms; i++) {
-        for (volatile int j = 0; j < 50000; j++) {
-            // Each iteration ~1 clock cycle (depends on compiler optimization)
+void test() {
+    *HEX0 = SEG7_ENCODINGS[0];
+    *HEX1 = SEG7_ENCODINGS[1];
+    *HEX2 = SEG7_ENCODINGS[2];
+    *HEX3 = SEG7_ENCODINGS[3];
+    *HEX4 = SEG7_ENCODINGS[4];
+    *HEX5 = SEG7_ENCODINGS[5];
+}
+
+void init() {
+    *HEX0 = SEG7_ENCODINGS[0];
+    *HEX1 = SEG7_ENCODINGS[0];
+    *HEX2 = SEG7_ENCODINGS[0];
+    *HEX3 = SEG7_ENCODINGS[0];
+    *HEX4 = SEG7_ENCODINGS[0];
+    *HEX5 = SEG7_ENCODINGS[0];
+}
+
+void delay_ms(int n) {
+    for (volatile int i = 0; i < n; i++) {
+        for (volatile int j = 0; j < 16666; j++) {
+            // Empty loop to create delay
         }
     }
 }
@@ -91,25 +109,29 @@ int main(void) {
     int input_data = 10;           // Default
     int seq[100];
     uint8_t initialized = 0;
+    int selection = 0;
 
+    init();
+    delay_ms(500);
+    test();
     while (1) {
         uint16_t switch_val = *SW;
 
         uint8_t selection = (switch_val >> 8) & 0x1;     // SW8
         uint8_t sw_input  = switch_val & 0xF;            // SW[3:0]
 
-        if (debounce_button(0x02)) {
+        if (!(*BTN & 0x02)) { //BTN[1]
             input_data = (sw_input == 0) ? 10 : sw_input;
         }
 
-        if (debounce_button(0x01)) {
-            *LEDR = (1 << selection);
+        if (!(*BTN & 0x01)) { //BTN[0]
+             *LEDR = (1 << selection);
 
             if (selection == 0) {  // QuickSort Mode
 
                 if (!initialized) {
                     for (int i = 0; i < input_data; i++) {
-                        seq[i] = i;
+                        seq[i] = random_1_to_1000();
                         testhex(seq[i]);
                         delay_ms(250);
                     }

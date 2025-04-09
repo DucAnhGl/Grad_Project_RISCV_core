@@ -4,13 +4,13 @@
 
 #include "main.h"
 
-int random ()
+int random_1_to_1000()
 {
     static unsigned int x = 2463534242U;
     x ^= (x << 13);
     x ^= (x >> 17);
     x ^= (x << 5);
-    return x >> 10;
+    return (x >> 10) % 1000 + 1;
 }
 
 void qsort (int a[], int first, int last)
