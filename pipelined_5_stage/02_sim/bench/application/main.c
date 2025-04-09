@@ -36,6 +36,43 @@ void qsort(int arr[], int left, int right);
 int fibonacci(int n);
 int random();
 
+void delay_ms(int ms) {
+    for (int i = 0; i < ms; i++) {
+        for (volatile int j = 0; j < 50000; j++) {
+            // Each iteration ~1 clock cycle (depends on compiler optimization)
+        }
+    }
+}
+
+int debounce_button(uint8_t mask) {
+    const int stable_count = 5;
+    int count = 0;
+
+    for (int i = 0; i < stable_count; i++) {
+        if ((*BTN & mask) == 0) {  // Active-low press
+            count++;
+        }
+        delay_ms(1);  // ~1 ms delay on 50 MHz clock
+    }
+
+    if (count == stable_count) {
+        while ((*BTN & mask) == 0) {
+            delay_ms(1);
+        }
+        return 1;
+    }
+
+    return 0;
+}
+
+int no_debounce_button(uint8_t mask) {
+    if ((*BTN & mask) == 0) {
+        while ((*BTN & mask) == 0);
+        return 1;
+    }
+    return 0;
+}
+
 void testhex(uint32_t num)  {
     *HEX0 = SEG7_ENCODINGS[num % 10];
     *HEX1 = SEG7_ENCODINGS[(num/10) % 10];
@@ -45,54 +82,58 @@ void testhex(uint32_t num)  {
     *HEX5 = SEG7_ENCODINGS[(num/100000) % 10];
 }
 
-// Simulation-friendly button check
-uint8_t button_pressed() {
-    return (*BTN & 0x01); // Immediate check without debounce
-}
-
 void exit_program () {
     while(1);
 }
 
-void run_selected(uint8_t selection) {
-    int i, j;
-    
-    switch(selection) {
-
-        case 0: { // QuickSort
-            int seq[SORTN];
-            for(i=0; i<SORTN; i++) seq[i] = random();
-            qsort(seq, 0, SORTN-1);
-            for(i=0; i<SORTN; i++) {
-                testhex(seq[i]);
-            }
-            break;
-        }
-            
-        case 1: { // Fibonacci
-            for(i=1; i<=FIBN; i++) {
-                testhex(fibonacci(i));
-            }
-            break;
-        }
-    }
-}
 
 int main(void) {
-    int selection;
-    // Continuous test mode for simulation
-    while(1) {
-        // Automatically cycle through all test cases
-            //*LEDR = (1 << selection); // Show current test
-            // Run test case
-            run_selected(selection);
-            *LEDR = (1 << selection);
-            run_selected(selection);
+    int input_data = 10;           // Default
+    int seq[100];
+    uint8_t initialized = 0;
+
+    while (1) {
+        uint16_t switch_val = *SW;
+
+        uint8_t selection = (switch_val >> 8) & 0x1;     // SW8
+        uint8_t sw_input  = switch_val & 0xF;            // SW[3:0]
+
+        if (debounce_button(0x02)) {
+            input_data = (sw_input == 0) ? 10 : sw_input;
+        }
+
+        if (debounce_button(0x01)) {
             *LEDR = (1 << selection);
 
-        exit_program();
+            if (selection == 0) {  // QuickSort Mode
+
+                if (!initialized) {
+                    for (int i = 0; i < input_data; i++) {
+                        seq[i] = i;
+                        testhex(seq[i]);
+                        delay_ms(250);
+                    }
+                    initialized = 1;
+                } else {
+                    // Second press: Sort and display
+                    qsort(seq, 0, input_data - 1);
+
+                    for (int i = 0; i < input_data; i++) {
+                        testhex(seq[i]);
+                        delay_ms(250);
+                    }
+
+                    initialized = 0; 
+                }
+
+            } else { // Fibonacci Mode
+                for (int i = 1; i <= input_data; i++) {
+                    testhex(fibonacci(i));
+                    delay_ms(250);
+                }
+            }
+        }
     }
-    
+
     return 0;
 }
-

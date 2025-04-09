@@ -60,8 +60,14 @@ int main(int argc, char** argv, char** env) {
                 m_trace->dump(sim_time);
         #endif
 
+        if ((sim_cycle % 1000) < 200) {
+            dut->io_btn_i = 0x02;  // Button pressed
+        } else {
+            dut->io_btn_i = 0x00;  // Button released
+        }
+
+        dut->io_sw_i = 0x00;
         if (dut->clk_i == 1) {
-            dut->io_btn_i = 0xF;
             if (dut->br_instr == 1) br_instr_counter++;
             if (dut->br_misses == 1) br_misses_counter++;
             if (dut->t_instr != 0) total_instruction_counter++;

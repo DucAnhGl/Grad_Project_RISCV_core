@@ -4,7 +4,8 @@ module top #(parameter HISTORY_WIDTH)
 (
   input  logic        clk_i,
   input  logic        rst_ni,
-  input  logic        io_btn_i,
+  input  logic [3:0]  io_btn_i,
+  input  logic [31:0] io_sw_i,
 
   output logic        br_misses,
   output logic        br_instr,
@@ -175,8 +176,8 @@ module top #(parameter HISTORY_WIDTH)
     .clk_i  (clk_i),
     .rst_ni (rst_ni),
     
-    .io_sw_i    (32'b0),  // Input for switches
-    .io_btn_i   (),  // Input for buttons
+    .io_sw_i    (io_sw_i),  // Input for switches
+    .io_btn_i   (io_btn_i),  // Input for buttons
 
     .pc_debug_o (),  // Debug program counter
     .insn_vld_o (),  // Instruction valid

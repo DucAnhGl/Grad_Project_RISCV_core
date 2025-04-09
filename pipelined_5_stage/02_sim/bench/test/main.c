@@ -98,7 +98,7 @@ int main(void)
             simrv_puth(j);
             simrv_puts(") = ");
             simrv_puth(val);
-            testhex(val);
+             testhex(val);
             simrv_putc('\n');
         }
     }
