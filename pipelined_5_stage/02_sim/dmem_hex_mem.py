@@ -59,4 +59,3 @@ if __name__ == '__main__':
     mem_to_intel_hex(input_file_1, output_file_1)
     mem_to_intel_hex(input_file_2, output_file_2)
     mem_to_intel_hex(input_file_3, output_file_3)
-    
