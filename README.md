@@ -132,7 +132,7 @@ Things should be noticed:
 
 - **Since there’s no `printf()` or console output, you can’t directly verify that CoreMark’s internal algorithm steps executed correctly. At present, validation is limited to: Running with ITERATIONS=1 and ensure the core doesn’t hang in an unintended loop.**
 
-- **Confirming that the testbench catches the while(1) as program completion.**  
+- **Confirming that the testbench catches the `while(1)` as program completion.**  
 
 - **All performance metrics (IPC, prediction accuracy, etc.) are measured entirely by the testbench through counting clock ticks, taken and mispredicted branches. Because the CPU design does not yet include software timers or counters.**
 
