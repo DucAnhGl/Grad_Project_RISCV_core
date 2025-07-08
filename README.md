@@ -12,6 +12,7 @@
 3. [Prerequisites](#prerequisites)  
 4. [Directory Structure](#directory-structure)  
 5. [Getting Started](#getting-started)  
+6. [Notice on Running CoreMark](#notice-on-running-coremark) 
 6. [Workflow](#workflow)  
 7. [Running on FPGA](#running-on-fpga)  
 
@@ -119,6 +120,28 @@ Open the file (pipelined_5_stage/02_sim/bench/RV32IM-CoreMark/src/common/ram.lds
 ```bash
 /your_pwd/init_asm.o(.text)
 ```
+
+## Notice on Running CoreMark
+The CoreMark application runs in bare-metal mode, so you cannot use `printf()` or return from `main()`. Instead, at the end of your C program you should write:
+
+```c
+while (1) { /* halt here */ }
+```
+
+Things should be noticed:
+
+- **Since there’s no `printf()` or console output, you can’t directly verify that CoreMark’s internal algorithm steps executed correctly. At present, validation is limited to: Running with ITERATIONS=1 and ensure the core doesn’t hang in an unintended loop.**
+
+- **Confirming that the testbench catches the while(1) as program completion.**  
+
+- **All performance metrics (IPC, prediction accuracy, etc.) are measured entirely by the testbench through counting clock ticks, taken and mispredicted branches. Because the CPU design does not yet include software timers or counters.**
+
+
+Planned improvements (not yet implemented):
+
+- **Run a golden reference model (e.g., Spike) in parallel and compare instruction traces to spot any mismatches during CoreMark execution.**
+
+- **Integrate a UART module into the CPU so that `printf()` logging can be used from software for on-chip debug and benchmark output.**
 
 ## Workflow
 
